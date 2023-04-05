@@ -24,6 +24,8 @@ let lowerModalClosers = document.querySelectorAll(".close-lower");
 let lowerModalOpeners = document.querySelectorAll(".open-lower");
 
 let saveUpper = document.getElementById("save-upper");
+
+let ifSentences = document.getElementById("if-sentences");
 close_modal(upperModal);
 
 
@@ -96,17 +98,45 @@ function save_upper_modal() {
 }
 
 function persist_if_condition_state(){
+    let ifMainSentence = "";
     let test = document.querySelector(".sentences");
     for (let index = 0; index <= latestId; index++) {
         if(localStorage.getItem(index) && !document.getElementById(JSON.parse(localStorage.getItem(index)).id)){
-            console.log("ajab");
             let newElem = document.createElement("div");
             newElem.classList.add("sentence");
             newElem.innerHTML = JSON.parse(localStorage.getItem(index)).sentence;
             newElem.id = JSON.parse(localStorage.getItem(index)).id;
-            console.log(JSON.parse(localStorage.getItem(index)).id)
             test.appendChild(newElem)
+            ifMainSentence = ifMainSentence + newElem.innerHTML;
+        }
+    }
+    ifSentences.innerHTML += ifMainSentence + " AND ";
+    
+}
+
+
+
+
+/* data structure of if conditions
+
+{
+    NOR : false,
+    operator : AND,
+    nodes : [1,2,3],
+    childs : {
+        NOR : true
+        operator : OR,
+        nodes : [5,6],
+        childs : {
+            NOR : false,
+            operator : AND
+            nodes : [7,9],
+            childs : false,
         }
     }
 }
 
+result is 
+    (1 AND 2 AND 3 AND !(5 OR 6 OR (7 AND 9)))
+
+*/
