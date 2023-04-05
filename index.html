@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="fa" dir="ltr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <title>Document</title>
+    <style>
+        .sentence {
+            padding: 0.5rem;
+            min-height: 45px;
+            width: 100%;
+            padding-left: 6rem;
+            border-top: 1px solid #ccc;
+            border-bottom: 1px solid #ccc;
+            border-left: 1px solid #ccc;
+            border-right: 1px solid #ccc;
+        }
+
+        #if-sentences {
+            padding: 5px 0;
+            padding-left: 2rem;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="flex h-screen justify-center items-center">
+        <button class="open-lower bg-blue-400 p-2 text-white rounded ">
+            open modal
+        </button>
+
+        <!-- start modal -->
+        <div id="lower-modal"
+            class="bg-[#00000055] transition-all duration-300 ease-in-out flex fixed top-0 right-0 left-0 bottom-0 z-50 h-screen w-full">
+            <!-- modal content -->
+            <div class="bg-white transition-all duration-300 ease-in-out m-auto w-[800px] shadow-lg rounded">
+                <!-- modal header -->
+                <div class="flex justify-between items-center p-7">
+                    <div class="underline">
+                        Add Business Rule
+                    </div>
+                    <div class="close-lower text-black cursor-pointer w-4 h-4">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5}
+                            stroke="currentColor" className="w-6 h-6">
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                    </div>
+                </div>
+
+                <div class="border border-gray-200 border-solid"></div>
+
+                <!-- modal body -->
+                <div class="w-full p-7">
+                    <div>
+                        <label class="w-full " id="genericName">Name</label>
+                        <div class="w-full">
+                            <input id="InputName" type="text"
+                                class="w-full border border-solid border-[#cccccc] p-1 rounded" maxlength="50">
+                            <label class="hidden" id="nameIsRequired">A name is required.</label>
+                        </div>
+                    </div>
+
+
+                    <div class="w-full my-4">
+                        <label class="w-full" id="adminModelDescription">Description</label>
+                        <div class="w-full">
+                            <input id="InputDescription" type="text"
+                                class="w-full border border-solid border-[#cccccc] p-1 rounded" maxlength="200">
+                            <label class="hidden" id="descriptionIsRequired">A Description is required.</label>
+                        </div>
+                    </div>
+
+                    <div class="w-full my-4">
+                        <div class="">
+                            <div class="w-full">
+                                <label class="">
+                                    <input type="checkbox" class="">
+                                    <span>Send Notifications</span>
+                                </label>
+                            </div>
+                        </div>
+                        <div class="w-full">
+                            <select class="w-full p-2 bg-white border border-[#cccccc] rounded">
+                                <optgroup label="Groups"></optgroup>
+
+                                <optgroup label="Users">
+                                    <option value="">MDM-SERVER\Administrator</option>
+                                </optgroup>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="w-full my-4">
+                        <div class="">
+                            <div class="w-full">
+                                <label class="">
+                                    <input type="checkbox" class="">
+                                    <span>Excluded</span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- start if container -->
+                    <div class="w-full my-4">
+                        <div class="w-full">If</div>
+                        <div id="if-sentences">
+                            name is name and
+                        </div>
+                        <div class="w-full ml-8 border border-solid border-[#cccccc]"></div>
+
+                        <div class="pl-8 max-h-[200px] overflow-auto">
+
+                            <!--  -->
+                            <div>
+                                <div class="bg-[#78d4f3] w-full  my-0 px-3 py-2 border-t-[1px] border-b-[1px] border-solid border-gray-200 ">
+                                    <select class="rounded px-2 py-1 text-xs">
+                                        <option value="AND">AND</option>
+                                        <option value="OR">OR</option>
+                                        <option value="NOT">NOT</option>
+                                    </select>
+                                </div>
+                                <div class="sentences">
+    
+                                </div>
+                            </div>
+                            <!--  -->
+
+
+                        </div>
+                        <div class="open-upper w-full pl-8 py-1 text-sm text-[#428bca] hover:underline cursor-pointer">
+                            Add
+                        </div>
+                    </div>
+                    <!-- end if container -->
+
+                    <!-- start then container -->
+                    <div id="thenContainer" class="my-4">
+                        <div class="w-full">Then</div>
+                        <div class="w-full ml-8 my-1 border border-solid border-[#cccccc]"></div>
+                        <div class="open-upper w-full ml-8 text-sm text-[#428bca] hover:underline cursor-pointer">
+                            Add
+                        </div>
+                    </div>
+                    <!-- end then container -->
+
+                    <!-- start else container -->
+                    <div id="elseContainer" class="my-4">
+                        <div class="w-full">Else</div>
+                        <div class="w-full ml-8 my-1 border border-solid border-[#cccccc]"></div>
+                        <div class="open-upper w-full ml-8 text-sm text-[#428bca] hover:underline cursor-pointer">
+                            Add
+                        </div>
+                    </div>
+                    <!-- end else container -->
+                </div>
+                <div class="border border-gray-200 border-solid"></div>
+                <div class="w-full flex justify-end p-7 py-6">
+                    <button
+                        class="w-[140px] bg-[#1eb8eb] disabled:bg-[#a0b8c8] disabled:text-black hover:bg-[#0a6eeb] hover:text-white rounded py-2 mr-4"
+                        disabled>save</button>
+                    <button
+                        class="close-lower w-[140px] bg-[#1eb8eb] hover:bg-[#0a6eeb] hover:text-white rounded py-2">cancel</button>
+                </div>
+                <!-- end modal body -->
+            </div>
+            <!-- end modal content -->
+        </div>
+        <!-- end modal -->
+
+
+        <!-- start upper modal -->
+        <div id="upper-modal"
+            class="bg-[#00000055] transition-all duration-300 ease-in-out w-full flex fixed top-0 right-0 left-0 bottom-0 z-50 h-screen">
+            <!-- modal content -->
+            <div class="bg-white transition-all duration-300 ease-in-out m-auto w-[600px] shadow-lg rounded">
+                <!-- modal header -->
+                <div class="flex justify-between items-center p-7">
+                    <div class="underline">
+                        Create Condition
+                    </div>
+                    <div class="close-upper text-black cursor-pointer w-4 h-4">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5}
+                            stroke="currentColor" className="w-6 h-6">
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                    </div>
+                </div>
+
+                <div class="border border-gray-200 border-solid"></div>
+
+                <!-- start modal body -->
+                <div class="w-full p-7">
+                    <!-- start inputs -->
+                    <div class="w-full">
+                        <label class="w-full " id="Attribute">Attribute</label>
+                        <div class="w-full">
+                            <select class="w-full p-2 bg-white border border-[#cccccc] rounded">
+                                <optgroup label="Attribute">
+                                    <option value="Name">Name</option>
+                                    <option value="Code">Code</option>
+                                </optgroup>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="w-full my-4">
+                        <label class="w-full " id="Operator">Operator</label>
+                        <div class="w-full">
+                            <select class="w-full p-2 bg-white border border-[#cccccc] rounded">
+                                <optgroup label="Value comparison">
+                                    <option value="is equal to">is equal to</option>
+                                    <option value="is not equal to">is not equal to</option>
+                                    <option value="is greater than">is greater than</option>
+                                    <option value="is greater than or equal to">is greater than or equal to</option>
+                                    <option value="is less than">is less than</option>
+                                    <option value="">is less than or equal to</option>
+                                    <option value="">starts with</option>
+                                    <option value="">does not start with</option>
+                                    <option value="">ends with</option>
+                                    <option value="">does not end with</option>
+                                    <option value="">contains</option>
+                                    <option value="">does not contain</option>
+                                    <option value="">contains the pattern</option>
+                                    <option value="">does not contain the pattern</option>
+                                    <option value="">contains the subset</option>
+                                    <option value="">does not contain the subset</option>
+                                    <option value="">is between</option>
+                                    <option value="">is not between</option>
+                                    <option value="">has changed</option>
+                                    <option value="">has not changed</option>
+                                </optgroup>
+
+                                <optgroup label="User defined script"></optgroup>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="w-full my-4">
+                        <label class="w-full">Is equal to</label>
+                        <div class="w-full">
+                            <select class="w-full p-2 bg-white border border-[#cccccc] rounded">
+                                <option value="Attribute value">Attribute value</option>
+                                <option value="Attribute" selected>Attribute</option>
+                                <option value="Blank">Blank</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="w-full my-4">
+                        <label class="w-full">Attribute</label>
+                        <div class="w-full">
+                            <select class="w-full p-2 bg-white border border-[#cccccc] rounded">
+                                <optgroup label="Attributes">
+                                    <option value="Name">Name</option>
+                                    <option value="Code">Code</option>
+                                </optgroup>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="border border-gray-200 border-solid"></div>
+
+                <div class="w-full flex justify-end p-7 py-6">
+                    <button id="save-upper"
+                        class="w-[140px] bg-[#1eb8eb] disabled:bg-[#a0b8c8] disabled:text-black hover:bg-[#0a6eeb] hover:text-white rounded py-2 mr-4">save</button>
+                    <button
+                        class="close-upper w-[140px] bg-[#1eb8eb] hover:bg-[#0a6eeb] hover:text-white rounded py-2">cancel</button>
+                </div>
+                <!-- end modal body -->
+            </div>
+            <!-- end modal content -->
+        </div>
+        <!-- end upper modal -->
+    </div>
+
+
+
+    <script src="main.js"></script>
+
+</body>
+
+</html>
