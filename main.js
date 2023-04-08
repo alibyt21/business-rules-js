@@ -130,7 +130,6 @@ operatorValue.addEventListener("change", function () {
 // END change second attribute when operator value change
 
 /* END operator change events */
-
 function save_upper_modal() {
   let conditionSentence;
   let selects = upperModal.querySelectorAll("select");
@@ -175,10 +174,10 @@ function persist_if_condition_state() {
   ifSentences.innerHTML += ifMainSentence + " AND ";
 }
 
+
 let ifContextMenu = document.getElementById("if-context-menu");
 let ifContainer = document.getElementById("ifContainer");
 ifContainer.addEventListener("contextmenu", show_if_context_menu);
-
 document.body.addEventListener("click",hide_if_context_menu);
 
 function show_if_context_menu(e){
