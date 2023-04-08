@@ -20,7 +20,7 @@
             border-right: 1px solid #ccc;
         }
 
-        .sentence:hover{
+        .sentence:hover {
             background-color: #efefef;
         }
 
@@ -39,7 +39,7 @@
 
         <!-- start modal -->
         <div id="lower-modal"
-            class="bg-[#00000055] transition-all duration-300 ease-in-out flex fixed top-0 right-0 left-0 bottom-0 z-50 h-screen w-full">
+            class="bg-[#00000055] overflow-auto transition-all duration-300 ease-in-out flex fixed top-0 right-0 left-0 bottom-0 z-50 h-screen w-full">
             <!-- modal content -->
             <div class="bg-white transition-all duration-300 ease-in-out m-auto w-[800px] shadow-lg rounded">
                 <!-- modal header -->
@@ -80,17 +80,17 @@
 
                     <div class="w-full my-4">
                         <div class="">
-                            <div class="w-full">
-                                <label class="">
-                                    <input type="checkbox" class="">
+                            <div class="w-full select-none">
+                                <label>
+                                    <input id="send-notification" type="checkbox">
                                     <span>Send Notifications</span>
                                 </label>
                             </div>
                         </div>
                         <div class="w-full">
-                            <select class="w-full p-2 bg-white border border-[#cccccc] rounded">
+                            <select id="notification-receiver"
+                                class="w-full p-2 bg-white border border-[#cccccc] rounded" disabled>
                                 <optgroup label="Groups"></optgroup>
-
                                 <optgroup label="Users">
                                     <option value="">MDM-SERVER\Administrator</option>
                                 </optgroup>
@@ -110,17 +110,21 @@
                     </div>
 
                     <!-- start if container -->
-                    <div class="w-full my-4">
+                    <div id="ifContainer" class="w-full my-4">
                         <div class="w-full">If</div>
                         <div id="if-sentences">
                         </div>
-                        <div class="w-full ml-8 border border-solid border-[#cccccc]"></div>
+
+                        <div class="w-full pr-8">
+                            <div class="w-full ml-8 border border-solid border-[#cccccc]"></div>
+                        </div>
 
                         <div class="pl-8 max-h-[200px] overflow-auto">
 
                             <!--  -->
                             <div class="condition-block">
-                                <div class="bg-[#78d4f3] w-full  my-0 px-3 py-2 border-t-[1px] border-b-[1px] border-solid border-gray-200 ">
+                                <div
+                                    class="bg-[#78d4f3] w-full  my-0 px-3 py-2 border-t-[1px] border-b-[1px] border-solid border-gray-200 ">
                                     <select class="rounded px-2 py-1 text-xs">
                                         <option value="AND">AND</option>
                                         <option value="OR">OR</option>
@@ -128,7 +132,7 @@
                                     </select>
                                 </div>
                                 <div class="sentences">
-    
+
                                 </div>
                             </div>
                             <!--  -->
@@ -144,7 +148,11 @@
                     <!-- start then container -->
                     <div id="thenContainer" class="my-4">
                         <div class="w-full">Then</div>
-                        <div class="w-full ml-8 my-1 border border-solid border-[#cccccc]"></div>
+
+                        <div class="w-full pr-8">
+                            <div class="w-full ml-8 border border-solid border-[#cccccc]"></div>
+                        </div>
+
                         <div class="open-upper w-full ml-8 text-sm text-[#428bca] hover:underline cursor-pointer">
                             Add
                         </div>
@@ -154,7 +162,11 @@
                     <!-- start else container -->
                     <div id="elseContainer" class="my-4">
                         <div class="w-full">Else</div>
-                        <div class="w-full ml-8 my-1 border border-solid border-[#cccccc]"></div>
+
+                        <div class="w-full pr-8">
+                            <div class="w-full ml-8 border border-solid border-[#cccccc]"></div>
+                        </div>
+
                         <div class="open-upper w-full ml-8 text-sm text-[#428bca] hover:underline cursor-pointer">
                             Add
                         </div>
@@ -178,7 +190,7 @@
 
         <!-- start upper modal -->
         <div id="upper-modal"
-            class="bg-[#00000055] transition-all duration-300 ease-in-out w-full flex fixed top-0 right-0 left-0 bottom-0 z-50 h-screen">
+            class="bg-[#00000055] overflow-auto transition-all duration-300 ease-in-out w-full flex fixed top-0 right-0 left-0 bottom-0 z-50 h-screen">
             <!-- modal content -->
             <div class="bg-white transition-all duration-300 ease-in-out m-auto w-[600px] shadow-lg rounded">
                 <!-- modal header -->
@@ -212,30 +224,30 @@
                     </div>
 
                     <div class="w-full my-4">
-                        <label class="w-full " id="Operator">Operator</label>
+                        <label class="w-full " id="operator-label">Operator</label>
                         <div class="w-full">
-                            <select class="w-full p-2 bg-white border border-[#cccccc] rounded">
+                            <select id="operator" class="w-full p-2 bg-white border border-[#cccccc] rounded">
                                 <optgroup label="Value comparison">
-                                    <option value="is equal to">is equal to</option>
-                                    <option value="is not equal to">is not equal to</option>
-                                    <option value="is greater than">is greater than</option>
-                                    <option value="is greater than or equal to">is greater than or equal to</option>
-                                    <option value="is less than">is less than</option>
-                                    <option value="">is less than or equal to</option>
-                                    <option value="">starts with</option>
-                                    <option value="">does not start with</option>
-                                    <option value="">ends with</option>
-                                    <option value="">does not end with</option>
-                                    <option value="">contains</option>
-                                    <option value="">does not contain</option>
-                                    <option value="">contains the pattern</option>
-                                    <option value="">does not contain the pattern</option>
-                                    <option value="">contains the subset</option>
-                                    <option value="">does not contain the subset</option>
-                                    <option value="">is between</option>
-                                    <option value="">is not between</option>
-                                    <option value="">has changed</option>
-                                    <option value="">has not changed</option>
+                                    <option>is equal to</option>
+                                    <option>is not equal to</option>
+                                    <option>is greater than</option>
+                                    <option>is greater than or equal to</option>
+                                    <option>is less than</option>
+                                    <option>is less than or equal to</option>
+                                    <option>starts with</option>
+                                    <option>does not start with</option>
+                                    <option>ends with</option>
+                                    <option>does not end with</option>
+                                    <option>contains</option>
+                                    <option>does not contain</option>
+                                    <option>contains the pattern</option>
+                                    <option>does not contain the pattern</option>
+                                    <option>contains the subset</option>
+                                    <option>does not contain the subset</option>
+                                    <option>is between</option>
+                                    <option>is not between</option>
+                                    <option>has changed</option>
+                                    <option>has not changed</option>
                                 </optgroup>
 
                                 <optgroup label="User defined script"></optgroup>
@@ -244,9 +256,9 @@
                     </div>
 
                     <div class="w-full my-4">
-                        <label class="w-full">Is equal to</label>
+                        <label class="w-full" id="operator-value-label">Is equal to</label>
                         <div class="w-full">
-                            <select class="w-full p-2 bg-white border border-[#cccccc] rounded">
+                            <select id="operator-value" class="w-full p-2 bg-white border border-[#cccccc] rounded">
                                 <option value="Attribute value">Attribute value</option>
                                 <option value="Attribute" selected>Attribute</option>
                                 <option value="Blank">Blank</option>
@@ -254,10 +266,10 @@
                         </div>
                     </div>
 
-                    <div class="w-full my-4">
+                    <div class="w-full my-4" id="second-attribute-div">
                         <label class="w-full">Attribute</label>
                         <div class="w-full">
-                            <select class="w-full p-2 bg-white border border-[#cccccc] rounded">
+                            <select id="second-attribute" class="w-full p-2 bg-white border border-[#cccccc] rounded">
                                 <optgroup label="Attributes">
                                     <option value="Name">Name</option>
                                     <option value="Code">Code</option>
@@ -280,6 +292,24 @@
             <!-- end modal content -->
         </div>
         <!-- end upper modal -->
+
+
+
+        <!-- START right click menu -->
+        <div id="if-context-menu" class="z-[99999] fixed flex flex-row bg-white shadow-lg border border-solid border-gray-100 rounded p-2" style="display:none">
+            <ul>
+                <li>
+                    delete
+                </li>
+                <li>
+                    add
+                </li>
+                <li>
+                    edit
+                </li>
+            </ul>
+        </div>
+        <!-- END right click menu -->
     </div>
 
 
