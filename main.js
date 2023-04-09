@@ -9,7 +9,6 @@ let unique_id_generator = (function (s) {
   };
 })(latestId);
 latestId = localStorage.getItem("latestId");
-console.log(latestId);
 /* END helper functions */
 
 // for opening upper modal just add class open-upper to element and so on...
@@ -28,9 +27,42 @@ let saveUpper = document.getElementById("save-upper");
 let ifSentences = document.getElementById("if-sentences");
 
 let sendNotification = document.getElementById("send-notification");
+let inputName = document.getElementById("input-name");
+let nameIsRequired = document.getElementById("name-is-required");
 
+init_lower_modal();
 close_modal(upperModal);
-close_modal(lowerModal);
+// close_modal(lowerModal);
+
+function init_lower_modal() {
+  if (!inputName.value) {
+    nameIsRequired.classList.remove("invisible");
+  }
+}
+
+inputName.addEventListener("change", function () {
+  check_if_lower_modal_save_button_should_be_actived();
+  check_if_name_alert_should_be_shown();
+});
+
+function check_if_lower_modal_save_button_should_be_actived() {
+  let lowerModalSaveButton = document.getElementById("lower-modal-save-button");
+  if (inputName.value) {
+    lowerModalSaveButton.removeAttribute("disabled");
+  } else {
+    lowerModalSaveButton.setAttribute("disabled", "");
+  }
+}
+
+function check_if_name_alert_should_be_shown() {
+  if (!inputName.value) {
+    nameIsRequired.classList.remove("invisible");
+    inputName.classList.add("alert");
+  } else {
+    nameIsRequired.classList.add("invisible");
+    inputName.classList.remove("alert");
+  }
+}
 
 upperModalOpeners.forEach(function (single) {
   single.addEventListener("click", function () {
@@ -69,11 +101,18 @@ function close_modal(node) {
   node.children[0].style.transform = "translate(0,-100px)";
 }
 
-function open_modal(node) {
+function open_modal(node,mode="if") {
   node.style.opacity = 100;
   node.style.visibility = "visible";
   //first child of modal (should be modal body)
   node.children[0].style.transform = "translate(0,0)";
+  if(mode == "if"){
+    // nothing
+  }else if(mode == "then"){
+    console.log("then");
+  }else if(mode == "else"){
+    console.log("else");
+  }
 }
 
 /* START notification toggle */
@@ -114,6 +153,7 @@ operatorValue.addEventListener("change", function () {
     newElem.innerHTML = secondAttributeOrginalInnerHTML;
     secondAttribute = document.getElementById("second-attribute");
     secondAttribute.parentNode.replaceChild(newElem, secondAttribute);
+    check_if_second_attribute_alert_should_be_shown();
   } else if (operatorValue.value == "Attribute value") {
     secondAttributeDiv.style.display = "block";
 
@@ -125,8 +165,29 @@ operatorValue.addEventListener("change", function () {
     );
     secondAttribute = document.getElementById("second-attribute");
     secondAttribute.parentNode.replaceChild(newElem, secondAttribute);
+    check_if_second_attribute_alert_should_be_shown();
   }
 });
+
+function check_if_second_attribute_alert_should_be_shown() {
+  let secondAttribute = document.getElementById("second-attribute");
+  let valueIsRequired = document.getElementById("value-is-required");
+  secondAttribute.addEventListener("change", function () {
+    check_if_second_attribute_alert_should_be_shown();
+  });
+  if (operatorValue.value == "Attribute value") {
+    if (!secondAttribute.value) {
+      secondAttribute.classList.add("alert");
+      valueIsRequired.classList.remove("invisible");
+    } else {
+      secondAttribute.classList.remove("alert");
+      valueIsRequired.classList.add("invisible");
+    }
+  } else {
+    valueIsRequired.classList.add("invisible");
+  }
+}
+
 // END change second attribute when operator value change
 
 /* END operator change events */
@@ -143,7 +204,7 @@ function save_upper_modal() {
       conditionSentence = conditionSentence + " " + selects[3].value;
       break;
     case "Blank":
-      // nothing!
+      conditionSentence = conditionSentence + " Blank";
       break;
     default:
       conditionSentence = conditionSentence + " " + selects[3].value;
@@ -174,25 +235,24 @@ function persist_if_condition_state() {
   ifSentences.innerHTML += ifMainSentence + " AND ";
 }
 
-
 let ifContextMenu = document.getElementById("if-context-menu");
 let ifContainer = document.getElementById("ifContainer");
 ifContainer.addEventListener("contextmenu", show_if_context_menu);
-document.body.addEventListener("click",hide_if_context_menu);
+document.body.addEventListener("click", hide_if_context_menu);
 
-function show_if_context_menu(e){
-    e.preventDefault();
-    e.stopPropagation();
-    if(ifContextMenu.style.display === "none"){
-        ifContextMenu.style.display = "block"
-    }
-    ifContextMenu.style.top = e.clientY + "px";
-    ifContextMenu.style.left = e.clientX + "px";
+function show_if_context_menu(e) {
+  e.preventDefault();
+  e.stopPropagation();
+  if (ifContextMenu.style.display === "none") {
+    ifContextMenu.style.display = "block";
+  }
+  ifContextMenu.style.top = e.clientY + "px";
+  ifContextMenu.style.left = e.clientX + "px";
 }
 
-function hide_if_context_menu(e){
-    e.stopPropagation();
-    ifContextMenu.style.display = "none"
+function hide_if_context_menu(e) {
+  e.stopPropagation();
+  ifContextMenu.style.display = "none";
 }
 
 /* data structure of if conditions

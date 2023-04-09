@@ -28,16 +28,32 @@
             padding: 5px 0;
             padding-left: 2rem;
         }
+
+        .alert{
+            border: 1px solid red !important;
+        }
+
+        .not-allowed{
+            cursor:not-allowed;
+            color: #aaaaaa;
+        }
+
+        .not-allowed:hover{
+            background-color: white !important;
+        }
     </style>
+
 </head>
 
 <body>
+
+
     <div class="flex h-screen justify-center items-center">
         <button class="open-lower bg-blue-400 p-2 text-white rounded ">
             open modal
         </button>
 
-        <!-- start modal -->
+        <!-- start lower modal -->
         <div id="lower-modal"
             class="bg-[#00000055] overflow-auto transition-all duration-300 ease-in-out flex fixed top-0 right-0 left-0 bottom-0 z-50 h-screen w-full">
             <!-- modal content -->
@@ -60,11 +76,11 @@
                 <!-- modal body -->
                 <div class="w-full p-7">
                     <div>
-                        <label class="w-full " id="genericName">Name</label>
+                        <label class="w-full " id="generic_name">Name</label>
                         <div class="w-full">
-                            <input id="InputName" type="text"
-                                class="w-full border border-solid border-[#cccccc] p-1 rounded" maxlength="50">
-                            <label class="hidden" id="nameIsRequired">A name is required.</label>
+                            <input id="input-name" type="text"
+                                class="w-full border border-solid border-[#cccccc] p-1 rounded alert" maxlength="50">
+                            <label class="text-red-600 text-sm invisible" id="name-is-required">A name is required.</label>
                         </div>
                     </div>
 
@@ -176,6 +192,7 @@
                 <div class="border border-gray-200 border-solid"></div>
                 <div class="w-full flex justify-end p-7 py-6">
                     <button
+                        id="lower-modal-save-button"
                         class="w-[140px] bg-[#1eb8eb] disabled:bg-[#a0b8c8] disabled:text-black hover:bg-[#0a6eeb] hover:text-white rounded py-2 mr-4"
                         disabled>save</button>
                     <button
@@ -185,7 +202,7 @@
             </div>
             <!-- end modal content -->
         </div>
-        <!-- end modal -->
+        <!-- end lower modal -->
 
 
         <!-- start upper modal -->
@@ -275,6 +292,7 @@
                                     <option value="Code">Code</option>
                                 </optgroup>
                             </select>
+                            <label class="text-red-600 text-sm invisible" id="value-is-required">A value is required.</label>
                         </div>
                     </div>
                 </div>
@@ -296,16 +314,22 @@
 
 
         <!-- START right click menu -->
-        <div id="if-context-menu" class="z-[99999] fixed flex flex-row bg-white shadow-lg border border-solid border-gray-100 rounded p-2" style="display:none">
+        <div id="if-context-menu" class="z-[99999] w-[150px] text-sm cursor-pointer py-1 fixed flex flex-row bg-white shadow-lg border border-solid border-gray-100 rounded" style="display:none">
             <ul>
-                <li>
-                    delete
+                <li class="hover:bg-gray-200 px-7 py-1">
+                    Add
                 </li>
-                <li>
-                    add
+                <li class="hover:bg-gray-200 px-7 py-1">
+                    Edit
                 </li>
-                <li>
-                    edit
+                <li class="hover:bg-gray-200 px-7 py-1">
+                    Delete
+                </li>
+                <li class="hover:bg-gray-200 px-7 py-1 not-allowed">
+                    Group
+                </li>
+                <li class="hover:bg-gray-200 px-7 py-1 not-allowed">
+                    Ungroup
                 </li>
             </ul>
         </div>
