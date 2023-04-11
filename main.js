@@ -17,14 +17,16 @@ let lowerModal = document.querySelector("#lower-modal");
 let upperModal = document.querySelector("#upper-modal");
 
 let upperModalClosers = document.querySelectorAll(".close-upper");
-let upperModalOpeners = document.querySelectorAll(".open-upper");
+let ifOpener = document.getElementById("if-opener");
+let thenOpener = document.getElementById("then-opener");
+let elseOpener = document.getElementById("else-opener");
 
 let lowerModalClosers = document.querySelectorAll(".close-lower");
 let lowerModalOpeners = document.querySelectorAll(".open-lower");
 
 let saveUpper = document.getElementById("save-upper");
 
-let ifSentences = document.getElementById("if-sentences");
+let ifSummary = document.getElementById("if-summary");
 
 let sendNotification = document.getElementById("send-notification");
 let inputName = document.getElementById("input-name");
@@ -64,11 +66,9 @@ function check_if_name_alert_should_be_shown() {
   }
 }
 
-upperModalOpeners.forEach(function (single) {
-  single.addEventListener("click", function () {
-    open_modal(upperModal);
-  });
-});
+ifOpener.addEventListener("click", () => open_modal(upperModal));
+thenOpener.addEventListener("click", () => open_modal(upperModal, "then"));
+elseOpener.addEventListener("click", () => open_modal(upperModal, "else"));
 
 upperModalClosers.forEach(function (single) {
   single.addEventListener("click", function () {
@@ -89,8 +89,9 @@ lowerModalClosers.forEach(function (single) {
 });
 
 saveUpper.addEventListener("click", function () {
-  save_upper_modal();
-  persist_if_condition_state();
+  let mode = saveUpper.dataset.mode;
+  save_upper_modal(mode);
+  persist_rules_state(mode);
   close_modal(upperModal);
 });
 
@@ -101,17 +102,74 @@ function close_modal(node) {
   node.children[0].style.transform = "translate(0,-100px)";
 }
 
-function open_modal(node,mode="if") {
+function open_modal(node, mode = "if") {
+  let operator = document.getElementById("operator");
+  let saveUpper = document.getElementById("save-upper");
   node.style.opacity = 100;
   node.style.visibility = "visible";
   //first child of modal (should be modal body)
   node.children[0].style.transform = "translate(0,0)";
-  if(mode == "if"){
+  if (mode == "if") {
     // nothing
-  }else if(mode == "then"){
-    console.log("then");
-  }else if(mode == "else"){
-    console.log("else");
+    saveUpper.dataset.mode = "if";
+  } else if (mode == "then") {
+    operator.innerHTML = `<optgroup label="Default value">
+    <option>defaults to</option>
+    <option>defaults to a generated value</option>
+    <option>defaults to a concatenated value</option>
+</optgroup>
+<optgroup label="Change value">
+    <option>equals</option>
+    <option>equals a concatenated value</option>
+</optgroup>
+<optgroup label="Validation">
+    <option>is required</option>
+    <option>is not valid</option>
+    <option>must contain the pattern</option>
+    <option>must be unique</option>
+    <option>must be greater than</option>
+    <option>must be equal to</option>
+    <option>must be greater than or equal to</option>
+    <option>must be less than</option>
+    <option>must be less than or equal to</option>
+    <option>must be between</option>
+    <option>must have a minimum length of</option>
+    <option>must have a maximum length of</option>
+</optgroup>
+<optgroup label="User defined script"></optgroup>
+<optgroup label="External action">
+    <option>start workflow</option>
+</optgroup>`;
+    saveUpper.dataset.mode = "then";
+  } else if (mode == "else") {
+    operator.innerHTML = `<optgroup label="Default value">
+    <option>defaults to</option>
+    <option>defaults to a generated value</option>
+    <option>defaults to a concatenated value</option>
+</optgroup>
+<optgroup label="Change value">
+    <option>equals</option>
+    <option>equals a concatenated value</option>
+</optgroup>
+<optgroup label="Validation">
+    <option>is required</option>
+    <option>is not valid</option>
+    <option>must contain the pattern</option>
+    <option>must be unique</option>
+    <option>must be greater than</option>
+    <option>must be equal to</option>
+    <option>must be greater than or equal to</option>
+    <option>must be less than</option>
+    <option>must be less than or equal to</option>
+    <option>must be between</option>
+    <option>must have a minimum length of</option>
+    <option>must have a maximum length of</option>
+</optgroup>
+<optgroup label="User defined script"></optgroup>
+<optgroup label="External action">
+    <option>start workflow</option>
+</optgroup>`;
+    saveUpper.dataset.mode = "else";
   }
 }
 
@@ -191,7 +249,7 @@ function check_if_second_attribute_alert_should_be_shown() {
 // END change second attribute when operator value change
 
 /* END operator change events */
-function save_upper_modal() {
+function save_upper_modal(mode = "if") {
   let conditionSentence;
   let selects = upperModal.querySelectorAll("select");
   let secondAttribute = upperModal.querySelector("#second-attribute");
@@ -211,36 +269,91 @@ function save_upper_modal() {
   }
   let conditionState = {
     id: unique_id_generator(),
+    attribute: selects[0].value,
+    operator: selects[1].value,
+    operatorValue: selects[2].value,
+    secondAttribute: secondAttribute.value ,
     sentence: conditionSentence,
+    mode: mode,
   };
   localStorage.setItem(latestId, JSON.stringify(conditionState));
 }
 
-function persist_if_condition_state() {
-  let ifMainSentence = "";
-  let test = document.querySelector(".sentences");
-  for (let index = 0; index <= latestId; index++) {
-    if (
-      localStorage.getItem(index) &&
-      !document.getElementById(JSON.parse(localStorage.getItem(index)).id)
-    ) {
-      let newElem = document.createElement("div");
-      newElem.classList.add("sentence");
-      newElem.innerHTML = JSON.parse(localStorage.getItem(index)).sentence;
-      newElem.id = JSON.parse(localStorage.getItem(index)).id;
-      test.appendChild(newElem);
-      ifMainSentence = ifMainSentence + newElem.innerHTML;
+function persist_rules_state(mode = "if") {
+  if (mode == "if") {
+    // START if
+    let newIfSentence = "";
+    let ifSentences = document.getElementById("if-sentences");
+    ifSentences.innerHTML = "";
+    for (let index = 0; index <= latestId; index++) {
+      if (
+        localStorage.getItem(index) &&
+        !document.getElementById(JSON.parse(localStorage.getItem(index)).id) &&
+        JSON.parse(localStorage.getItem(index)).mode == mode
+      ) {
+        create_new_sentence_and_append(ifSentences, index);
+      }
     }
+
+    // ifSummary.innerHTML += newIfSentence + " AND ";
+    // END if
+  } else if (mode == "then") {
+    // START then
+    let thenSentences = document.getElementById("then-sentences");
+    for (let index = 0; index <= latestId; index++) {
+      if (
+        localStorage.getItem(index) &&
+        !document.getElementById(JSON.parse(localStorage.getItem(index)).id) &&
+        JSON.parse(localStorage.getItem(index)).mode == mode
+      ) {
+        create_new_sentence_and_append(thenSentences, index);
+      }
+    }
+    // END then
+  } else if (mode == "else") {
+    // START else
+    let elseSentences = document.getElementById("else-sentences");
+    for (let index = 0; index <= latestId; index++) {
+      if (
+        localStorage.getItem(index) &&
+        !document.getElementById(JSON.parse(localStorage.getItem(index)).id) &&
+        JSON.parse(localStorage.getItem(index)).mode == mode
+      ) {
+        create_new_sentence_and_append(elseSentences, index);
+      }
+    }
+    // END else
   }
-  ifSentences.innerHTML += ifMainSentence + " AND ";
 }
 
+function create_new_sentence_and_append(parentNode, index) {
+  let newElem = document.createElement("div");
+  newElem.classList.add("sentence");
+  newElem.innerHTML = JSON.parse(localStorage.getItem(index)).sentence;
+  newElem.id = JSON.parse(localStorage.getItem(index)).id;
+  parentNode.appendChild(newElem);
+}
+
+
+function load_upper_modal(id){
+  data = JSON.parse(localStorage.getItem(id));
+  let attribute = document.getElementById("attribute");
+  let operator = document.getElementById("operator");
+  let operatorValue = document.getElementById("operator-value");
+  let secondAttribute = document.getElementById("second-attribute");
+  attribute.value = data.attribute;
+}
+
+
+/* START Context menu */
 let ifContextMenu = document.getElementById("if-context-menu");
-let ifContainer = document.getElementById("ifContainer");
-ifContainer.addEventListener("contextmenu", show_if_context_menu);
+let ifSentencesContainer = document.getElementById("if-sentences-container");
+ifSentencesContainer.addEventListener("contextmenu", show_if_context_menu);
 document.body.addEventListener("click", hide_if_context_menu);
 
+let latestElementRightClick;
 function show_if_context_menu(e) {
+  latestElementRightClick = e.target.id;
   e.preventDefault();
   e.stopPropagation();
   if (ifContextMenu.style.display === "none") {
@@ -254,6 +367,28 @@ function hide_if_context_menu(e) {
   e.stopPropagation();
   ifContextMenu.style.display = "none";
 }
+
+let addMenu = document.getElementById("add");
+let editMenu = document.getElementById("edit");
+let deleteMenu = document.getElementById("delete");
+let groupMenu = document.getElementById("group");
+let ungroupMenu = document.getElementById("ungroup");
+
+deleteMenu.addEventListener("click", function () {
+  localStorage.removeItem(latestElementRightClick);
+  persist_rules_state("if");
+});
+
+addMenu.addEventListener("click", function () {
+  open_modal(upperModal);
+});
+
+editMenu.addEventListener("click", function () {
+  open_modal(upperModal);
+  load_upper_modal(latestElementRightClick);
+});
+
+/* END Context menu */
 
 /* data structure of if conditions
 

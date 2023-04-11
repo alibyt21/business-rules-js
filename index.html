@@ -20,25 +20,29 @@
             border-right: 1px solid #ccc;
         }
 
+        #then-sentences .sentence, #else-sentences .sentence {
+            padding-left: 1rem;
+        }
+
         .sentence:hover {
             background-color: #efefef;
         }
 
-        #if-sentences {
+        #if-summary {
             padding: 5px 0;
             padding-left: 2rem;
         }
 
-        .alert{
+        .alert {
             border: 1px solid red !important;
         }
 
-        .not-allowed{
-            cursor:not-allowed;
+        .not-allowed {
+            cursor: not-allowed;
             color: #aaaaaa;
         }
 
-        .not-allowed:hover{
+        .not-allowed:hover {
             background-color: white !important;
         }
     </style>
@@ -80,7 +84,8 @@
                         <div class="w-full">
                             <input id="input-name" type="text"
                                 class="w-full border border-solid border-[#cccccc] p-1 rounded alert" maxlength="50">
-                            <label class="text-red-600 text-sm invisible" id="name-is-required">A name is required.</label>
+                            <label class="text-red-600 text-sm invisible" id="name-is-required">A name is
+                                required.</label>
                         </div>
                     </div>
 
@@ -126,9 +131,9 @@
                     </div>
 
                     <!-- start if container -->
-                    <div id="ifContainer" class="w-full my-4">
+                    <div id="if-container" class="w-full my-4">
                         <div class="w-full">If</div>
-                        <div id="if-sentences">
+                        <div id="if-summary">
                         </div>
 
                         <div class="w-full pr-8">
@@ -137,8 +142,8 @@
 
                         <div class="pl-8 max-h-[200px] overflow-auto">
 
-                            <!--  -->
-                            <div class="condition-block">
+                            <!-- start if sentences -->
+                            <div class="condition-block" id="if-sentences-container">
                                 <div
                                     class="bg-[#78d4f3] w-full  my-0 px-3 py-2 border-t-[1px] border-b-[1px] border-solid border-gray-200 ">
                                     <select class="rounded px-2 py-1 text-xs">
@@ -147,15 +152,14 @@
                                         <option value="NOT">NOT</option>
                                     </select>
                                 </div>
-                                <div class="sentences">
-
-                                </div>
+                                <div id="if-sentences" class="sentences"></div>
                             </div>
-                            <!--  -->
+                            <!-- end if sentences -->
 
 
                         </div>
-                        <div class="open-upper w-full pl-8 py-1 text-sm text-[#428bca] hover:underline cursor-pointer">
+                        <div id="if-opener"
+                            class="open-upper w-full pl-8 py-1 text-sm text-[#428bca] hover:underline cursor-pointer">
                             Add
                         </div>
                     </div>
@@ -169,7 +173,16 @@
                             <div class="w-full ml-8 border border-solid border-[#cccccc]"></div>
                         </div>
 
-                        <div class="open-upper w-full ml-8 text-sm text-[#428bca] hover:underline cursor-pointer">
+                        <!-- start then sentences -->
+                        <div class="pl-8 max-h-[200px] overflow-auto">
+                            <div class="condition-block">
+                                <div id="then-sentences" class="sentences"></div>
+                            </div>
+                        </div>
+                        <!-- end then sentences -->
+
+                        <div id="then-opener"
+                            class="open-upper w-full ml-8 text-sm text-[#428bca] hover:underline cursor-pointer">
                             Add
                         </div>
                     </div>
@@ -183,7 +196,16 @@
                             <div class="w-full ml-8 border border-solid border-[#cccccc]"></div>
                         </div>
 
-                        <div class="open-upper w-full ml-8 text-sm text-[#428bca] hover:underline cursor-pointer">
+                        <!-- start else sentences -->
+                        <div class="pl-8 max-h-[200px] overflow-auto">
+                            <div class="condition-block">
+                                <div id="else-sentences" class="sentences"></div>
+                            </div>
+                        </div>
+                        <!-- end else sentences -->
+
+                        <div id="else-opener"
+                            class="open-upper w-full ml-8 text-sm text-[#428bca] hover:underline cursor-pointer">
                             Add
                         </div>
                     </div>
@@ -191,8 +213,7 @@
                 </div>
                 <div class="border border-gray-200 border-solid"></div>
                 <div class="w-full flex justify-end p-7 py-6">
-                    <button
-                        id="lower-modal-save-button"
+                    <button id="lower-modal-save-button"
                         class="w-[140px] bg-[#1eb8eb] disabled:bg-[#a0b8c8] disabled:text-black hover:bg-[#0a6eeb] hover:text-white rounded py-2 mr-4"
                         disabled>save</button>
                     <button
@@ -229,9 +250,9 @@
                 <div class="w-full p-7">
                     <!-- start inputs -->
                     <div class="w-full">
-                        <label class="w-full " id="Attribute">Attribute</label>
+                        <label class="w-full" >Attribute</label>
                         <div class="w-full">
-                            <select class="w-full p-2 bg-white border border-[#cccccc] rounded">
+                            <select id="attribute" class="w-full p-2 bg-white border border-[#cccccc] rounded">
                                 <optgroup label="Attribute">
                                     <option value="Name">Name</option>
                                     <option value="Code">Code</option>
@@ -292,7 +313,8 @@
                                     <option value="Code">Code</option>
                                 </optgroup>
                             </select>
-                            <label class="text-red-600 text-sm invisible" id="value-is-required">A value is required.</label>
+                            <label class="text-red-600 text-sm invisible" id="value-is-required">A value is
+                                required.</label>
                         </div>
                     </div>
                 </div>
@@ -300,7 +322,7 @@
                 <div class="border border-gray-200 border-solid"></div>
 
                 <div class="w-full flex justify-end p-7 py-6">
-                    <button id="save-upper"
+                    <button id="save-upper" data-mode
                         class="w-[140px] bg-[#1eb8eb] disabled:bg-[#a0b8c8] disabled:text-black hover:bg-[#0a6eeb] hover:text-white rounded py-2 mr-4">save</button>
                     <button
                         class="close-upper w-[140px] bg-[#1eb8eb] hover:bg-[#0a6eeb] hover:text-white rounded py-2">cancel</button>
@@ -314,21 +336,23 @@
 
 
         <!-- START right click menu -->
-        <div id="if-context-menu" class="z-[99999] w-[150px] text-sm cursor-pointer py-1 fixed flex flex-row bg-white shadow-lg border border-solid border-gray-100 rounded" style="display:none">
+        <div id="if-context-menu"
+            class="z-[99999] w-[150px] text-sm cursor-pointer py-1 fixed flex flex-row bg-white shadow-lg border border-solid border-gray-100 rounded"
+            style="display:none">
             <ul>
-                <li class="hover:bg-gray-200 px-7 py-1">
+                <li id="add" class="hover:bg-gray-200 px-7 py-1">
                     Add
                 </li>
-                <li class="hover:bg-gray-200 px-7 py-1">
+                <li id="edit" class="hover:bg-gray-200 px-7 py-1">
                     Edit
                 </li>
-                <li class="hover:bg-gray-200 px-7 py-1">
+                <li id="delete" class="hover:bg-gray-200 px-7 py-1">
                     Delete
                 </li>
-                <li class="hover:bg-gray-200 px-7 py-1 not-allowed">
+                <li id="group" class="hover:bg-gray-200 px-7 py-1 not-allowed">
                     Group
                 </li>
-                <li class="hover:bg-gray-200 px-7 py-1 not-allowed">
+                <li id="ungroup" class="hover:bg-gray-200 px-7 py-1 not-allowed">
                     Ungroup
                 </li>
             </ul>
