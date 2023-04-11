@@ -32,6 +32,62 @@ let sendNotification = document.getElementById("send-notification");
 let inputName = document.getElementById("input-name");
 let nameIsRequired = document.getElementById("name-is-required");
 
+let elseOperatorInnerHTML = `<optgroup label="Default value">
+<option>defaults to</option>
+<option>defaults to a generated value</option>
+<option>defaults to a concatenated value</option>
+</optgroup>
+<optgroup label="Change value">
+<option>equals</option>
+<option>equals a concatenated value</option>
+</optgroup>
+<optgroup label="Validation">
+<option>is required</option>
+<option>is not valid</option>
+<option>must contain the pattern</option>
+<option>must be unique</option>
+<option>must be greater than</option>
+<option>must be equal to</option>
+<option>must be greater than or equal to</option>
+<option>must be less than</option>
+<option>must be less than or equal to</option>
+<option>must be between</option>
+<option>must have a minimum length of</option>
+<option>must have a maximum length of</option>
+</optgroup>
+<optgroup label="User defined script"></optgroup>
+<optgroup label="External action">
+<option>start workflow</option>
+</optgroup>`;
+
+let thenOperatorInnerHTML = `<optgroup label="Default value">
+<option>defaults to</option>
+<option>defaults to a generated value</option>
+<option>defaults to a concatenated value</option>
+</optgroup>
+<optgroup label="Change value">
+<option>equals</option>
+<option>equals a concatenated value</option>
+</optgroup>
+<optgroup label="Validation">
+<option>is required</option>
+<option>is not valid</option>
+<option>must contain the pattern</option>
+<option>must be unique</option>
+<option>must be greater than</option>
+<option>must be equal to</option>
+<option>must be greater than or equal to</option>
+<option>must be less than</option>
+<option>must be less than or equal to</option>
+<option>must be between</option>
+<option>must have a minimum length of</option>
+<option>must have a maximum length of</option>
+</optgroup>
+<optgroup label="User defined script"></optgroup>
+<optgroup label="External action">
+<option>start workflow</option>
+</optgroup>`;
+
 init_lower_modal();
 close_modal(upperModal);
 // close_modal(lowerModal);
@@ -90,7 +146,8 @@ lowerModalClosers.forEach(function (single) {
 
 saveUpper.addEventListener("click", function () {
   let mode = saveUpper.dataset.mode;
-  save_upper_modal(mode);
+  let id = saveUpper.dataset.editID;
+  save_upper_modal(mode,id);
   persist_rules_state(mode);
   close_modal(upperModal);
 });
@@ -102,7 +159,7 @@ function close_modal(node) {
   node.children[0].style.transform = "translate(0,-100px)";
 }
 
-function open_modal(node, mode = "if") {
+function open_modal(node, mode = "if",id) {
   let operator = document.getElementById("operator");
   let saveUpper = document.getElementById("save-upper");
   node.style.opacity = 100;
@@ -113,63 +170,14 @@ function open_modal(node, mode = "if") {
     // nothing
     saveUpper.dataset.mode = "if";
   } else if (mode == "then") {
-    operator.innerHTML = `<optgroup label="Default value">
-    <option>defaults to</option>
-    <option>defaults to a generated value</option>
-    <option>defaults to a concatenated value</option>
-</optgroup>
-<optgroup label="Change value">
-    <option>equals</option>
-    <option>equals a concatenated value</option>
-</optgroup>
-<optgroup label="Validation">
-    <option>is required</option>
-    <option>is not valid</option>
-    <option>must contain the pattern</option>
-    <option>must be unique</option>
-    <option>must be greater than</option>
-    <option>must be equal to</option>
-    <option>must be greater than or equal to</option>
-    <option>must be less than</option>
-    <option>must be less than or equal to</option>
-    <option>must be between</option>
-    <option>must have a minimum length of</option>
-    <option>must have a maximum length of</option>
-</optgroup>
-<optgroup label="User defined script"></optgroup>
-<optgroup label="External action">
-    <option>start workflow</option>
-</optgroup>`;
+    operator.innerHTML = thenOperatorInnerHTML;
     saveUpper.dataset.mode = "then";
   } else if (mode == "else") {
-    operator.innerHTML = `<optgroup label="Default value">
-    <option>defaults to</option>
-    <option>defaults to a generated value</option>
-    <option>defaults to a concatenated value</option>
-</optgroup>
-<optgroup label="Change value">
-    <option>equals</option>
-    <option>equals a concatenated value</option>
-</optgroup>
-<optgroup label="Validation">
-    <option>is required</option>
-    <option>is not valid</option>
-    <option>must contain the pattern</option>
-    <option>must be unique</option>
-    <option>must be greater than</option>
-    <option>must be equal to</option>
-    <option>must be greater than or equal to</option>
-    <option>must be less than</option>
-    <option>must be less than or equal to</option>
-    <option>must be between</option>
-    <option>must have a minimum length of</option>
-    <option>must have a maximum length of</option>
-</optgroup>
-<optgroup label="User defined script"></optgroup>
-<optgroup label="External action">
-    <option>start workflow</option>
-</optgroup>`;
+    operator.innerHTML = elseOperatorInnerHTML;
     saveUpper.dataset.mode = "else";
+  }
+  if(id){
+    saveUpper.dataset.editID = id;
   }
 }
 
@@ -249,7 +257,7 @@ function check_if_second_attribute_alert_should_be_shown() {
 // END change second attribute when operator value change
 
 /* END operator change events */
-function save_upper_modal(mode = "if") {
+function save_upper_modal(mode = "if",id) {
   let conditionSentence;
   let selects = upperModal.querySelectorAll("select");
   let secondAttribute = upperModal.querySelector("#second-attribute");
@@ -272,11 +280,15 @@ function save_upper_modal(mode = "if") {
     attribute: selects[0].value,
     operator: selects[1].value,
     operatorValue: selects[2].value,
-    secondAttribute: secondAttribute.value ,
+    secondAttribute: secondAttribute.value,
     sentence: conditionSentence,
     mode: mode,
   };
-  localStorage.setItem(latestId, JSON.stringify(conditionState));
+  if(id){
+    localStorage.setItem(id, JSON.stringify(conditionState));
+  }else{
+    localStorage.setItem(latestId, JSON.stringify(conditionState));
+  }
 }
 
 function persist_rules_state(mode = "if") {
@@ -334,16 +346,27 @@ function create_new_sentence_and_append(parentNode, index) {
   parentNode.appendChild(newElem);
 }
 
-
-function load_upper_modal(id){
+function load_upper_modal(id) {
   data = JSON.parse(localStorage.getItem(id));
   let attribute = document.getElementById("attribute");
   let operator = document.getElementById("operator");
   let operatorValue = document.getElementById("operator-value");
   let secondAttribute = document.getElementById("second-attribute");
-  attribute.value = data.attribute;
+  change_selected_option_by_text(attribute, data.attribute);
+  change_selected_option_by_text(operator, data.operator);
+  change_selected_option_by_text(operatorValue, data.operatorValue);
+  if(data.operatorValue == "Attribute value"){
+    secondAttribute.value = data.secondAttribute;
+  }else{
+    change_selected_option_by_text(secondAttribute, data.secondAttribute);
+  }
 }
 
+function change_selected_option_by_text(selectNode, text) {
+  const options = Array.from(selectNode.options);
+  const optionToSelect = options.find((item) => item.text === text);
+  optionToSelect.selected = true;
+}
 
 /* START Context menu */
 let ifContextMenu = document.getElementById("if-context-menu");
@@ -384,7 +407,8 @@ addMenu.addEventListener("click", function () {
 });
 
 editMenu.addEventListener("click", function () {
-  open_modal(upperModal);
+  console.log(latestElementRightClick);
+  open_modal(upperModal,"if",latestElementRightClick);
   load_upper_modal(latestElementRightClick);
 });
 
