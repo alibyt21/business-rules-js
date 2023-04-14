@@ -136,13 +136,12 @@
                         <div id="if-summary">
                         </div>
 
-                        <div class="w-full pr-8">
+                        <div class="w-full pr-8 pt-2">
                             <div class="w-full ml-8 border border-solid border-[#cccccc]"></div>
                         </div>
 
+                        <!-- start if sentences -->
                         <div class="pl-8 max-h-[200px] overflow-auto">
-
-                            <!-- start if sentences -->
                             <div class="condition-block" id="if-sentences-container">
                                 <div
                                     class="bg-[#78d4f3] w-full  my-0 px-3 py-2 border-t-[1px] border-b-[1px] border-solid border-gray-200 ">
@@ -154,12 +153,11 @@
                                 </div>
                                 <div id="if-sentences" class="sentences"></div>
                             </div>
-                            <!-- end if sentences -->
-
-
                         </div>
+                        <!-- end if sentences -->
+
                         <div id="if-opener"
-                            class="open-upper w-full pl-8 py-1 text-sm text-[#428bca] hover:underline cursor-pointer">
+                            class="open-upper w-full pl-8 py-2 text-sm text-[#428bca] hover:underline cursor-pointer">
                             Add
                         </div>
                     </div>
@@ -169,20 +167,20 @@
                     <div id="thenContainer" class="my-4">
                         <div class="w-full">Then</div>
 
-                        <div class="w-full pr-8">
+                        <div class="w-full pr-8 pt-2">
                             <div class="w-full ml-8 border border-solid border-[#cccccc]"></div>
                         </div>
 
                         <!-- start then sentences -->
                         <div class="pl-8 max-h-[200px] overflow-auto">
-                            <div class="condition-block">
+                            <div class="condition-block" id="then-sentences-container">
                                 <div id="then-sentences" class="sentences"></div>
                             </div>
                         </div>
                         <!-- end then sentences -->
 
                         <div id="then-opener"
-                            class="open-upper w-full ml-8 text-sm text-[#428bca] hover:underline cursor-pointer">
+                            class="open-upper w-full ml-8 py-2 text-sm text-[#428bca] hover:underline cursor-pointer">
                             Add
                         </div>
                     </div>
@@ -192,20 +190,20 @@
                     <div id="elseContainer" class="my-4">
                         <div class="w-full">Else</div>
 
-                        <div class="w-full pr-8">
+                        <div class="w-full pr-8 pt-2">
                             <div class="w-full ml-8 border border-solid border-[#cccccc]"></div>
                         </div>
 
                         <!-- start else sentences -->
                         <div class="pl-8 max-h-[200px] overflow-auto">
-                            <div class="condition-block">
+                            <div class="condition-block" id="else-sentences-container">
                                 <div id="else-sentences" class="sentences"></div>
                             </div>
                         </div>
                         <!-- end else sentences -->
 
                         <div id="else-opener"
-                            class="open-upper w-full ml-8 text-sm text-[#428bca] hover:underline cursor-pointer">
+                            class="open-upper w-full py-2 ml-8 text-sm text-[#428bca] hover:underline cursor-pointer">
                             Add
                         </div>
                     </div>
@@ -214,7 +212,7 @@
                 <div class="border border-gray-200 border-solid"></div>
                 <div class="w-full flex justify-end p-7 py-6">
                     <button id="lower-modal-save-button"
-                        class="w-[140px] bg-[#1eb8eb] disabled:bg-[#a0b8c8] disabled:text-black hover:bg-[#0a6eeb] hover:text-white rounded py-2 mr-4"
+                        class="close-lower w-[140px] bg-[#1eb8eb] disabled:bg-[#a0b8c8] disabled:text-black hover:bg-[#0a6eeb] hover:text-white rounded py-2 mr-4"
                         disabled>save</button>
                     <button
                         class="close-lower w-[140px] bg-[#1eb8eb] hover:bg-[#0a6eeb] hover:text-white rounded py-2">cancel</button>
@@ -322,7 +320,7 @@
                 <div class="border border-gray-200 border-solid"></div>
 
                 <div class="w-full flex justify-end p-7 py-6">
-                    <button id="save-upper" data-mode data-editID
+                    <button id="save-upper" data-mode data-number
                         class="w-[140px] bg-[#1eb8eb] disabled:bg-[#a0b8c8] disabled:text-black hover:bg-[#0a6eeb] hover:text-white rounded py-2 mr-4">save</button>
                     <button
                         class="close-upper w-[140px] bg-[#1eb8eb] hover:bg-[#0a6eeb] hover:text-white rounded py-2">cancel</button>
@@ -336,17 +334,17 @@
 
 
         <!-- START right click menu -->
-        <div id="if-context-menu"
+        <div id="context-menu"
             class="z-[99999] w-[150px] text-sm cursor-pointer py-1 fixed flex flex-row bg-white shadow-lg border border-solid border-gray-100 rounded"
             style="display:none">
             <ul>
-                <li id="add" class="hover:bg-gray-200 px-7 py-1">
+                <li id="add" data-mode class="hover:bg-gray-200 px-7 py-1">
                     Add
                 </li>
-                <li id="edit" class="hover:bg-gray-200 px-7 py-1">
+                <li id="edit" data-mode class="hover:bg-gray-200 px-7 py-1">
                     Edit
                 </li>
-                <li id="delete" class="hover:bg-gray-200 px-7 py-1">
+                <li id="delete" data-mode class="hover:bg-gray-200 px-7 py-1">
                     Delete
                 </li>
                 <li id="group" class="hover:bg-gray-200 px-7 py-1 not-allowed">

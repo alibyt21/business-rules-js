@@ -103,6 +103,15 @@ inputName.addEventListener("change", function () {
   check_if_name_alert_should_be_shown();
 });
 
+function check_if_upper_modal_save_button_should_be_actived() {
+  let secondAttribute = document.getElementById("second-attribute");
+  if (secondAttribute.value) {
+    saveUpper.removeAttribute("disabled");
+  } else {
+    saveUpper.setAttribute("disabled", "");
+  }
+}
+
 function check_if_lower_modal_save_button_should_be_actived() {
   let lowerModalSaveButton = document.getElementById("lower-modal-save-button");
   if (inputName.value) {
@@ -146,8 +155,8 @@ lowerModalClosers.forEach(function (single) {
 
 saveUpper.addEventListener("click", function () {
   let mode = saveUpper.dataset.mode;
-  let id = saveUpper.dataset.editID;
-  save_upper_modal(mode,id);
+  let id = saveUpper.dataset.number;
+  save_upper_modal(mode, id);
   persist_rules_state(mode);
   close_modal(upperModal);
 });
@@ -159,7 +168,8 @@ function close_modal(node) {
   node.children[0].style.transform = "translate(0,-100px)";
 }
 
-function open_modal(node, mode = "if",id) {
+function open_modal(node, mode = "if", id = false) {
+  reset_upper_modal();
   let operator = document.getElementById("operator");
   let saveUpper = document.getElementById("save-upper");
   node.style.opacity = 100;
@@ -176,8 +186,10 @@ function open_modal(node, mode = "if",id) {
     operator.innerHTML = elseOperatorInnerHTML;
     saveUpper.dataset.mode = "else";
   }
-  if(id){
-    saveUpper.dataset.editID = id;
+  if (id) {
+    saveUpper.dataset.number = id;
+  } else {
+    delete saveUpper.dataset.number;
   }
 }
 
@@ -204,42 +216,59 @@ operator.addEventListener("change", function () {
 let secondAttribute = document.getElementById("second-attribute");
 let secondAttributeOrginalInnerHTML = secondAttribute.innerHTML;
 operatorValue.addEventListener("change", function () {
-  let secondAttributeDiv = document.getElementById("second-attribute-div");
   if (operatorValue.value == "Blank") {
-    secondAttributeDiv.style.display = "none";
+    switch_to_blank_mode();
   } else if (operatorValue.value == "Attribute") {
-    secondAttributeDiv.style.display = "block";
-
-    let newElem = document.createElement("select");
-    newElem.setAttribute("id", "second-attribute");
-    newElem.setAttribute(
-      "class",
-      "w-full p-2 bg-white border border-[#cccccc] rounded"
-    );
-    newElem.innerHTML = secondAttributeOrginalInnerHTML;
-    secondAttribute = document.getElementById("second-attribute");
-    secondAttribute.parentNode.replaceChild(newElem, secondAttribute);
-    check_if_second_attribute_alert_should_be_shown();
+    switch_to_attribute_mode();
   } else if (operatorValue.value == "Attribute value") {
-    secondAttributeDiv.style.display = "block";
-
-    let newElem = document.createElement("input");
-    newElem.setAttribute("id", "second-attribute");
-    newElem.setAttribute(
-      "class",
-      "w-full p-2 bg-white border border-[#cccccc] rounded"
-    );
-    secondAttribute = document.getElementById("second-attribute");
-    secondAttribute.parentNode.replaceChild(newElem, secondAttribute);
-    check_if_second_attribute_alert_should_be_shown();
+    switch_to_attribute_value_mode();
+    check_if_upper_modal_save_button_should_be_actived();
   }
 });
+
+function switch_to_blank_mode() {
+  let secondAttributeDiv = document.getElementById("second-attribute-div");
+  secondAttributeDiv.style.display = "none";
+}
+
+function switch_to_attribute_mode() {
+  let secondAttributeDiv = document.getElementById("second-attribute-div");
+  let secondAttribute = document.getElementById("second-attribute");
+  secondAttributeDiv.style.display = "block";
+  let newElem = document.createElement("select");
+  newElem.setAttribute("id", "second-attribute");
+  newElem.setAttribute(
+    "class",
+    "w-full p-2 bg-white border border-[#cccccc] rounded"
+  );
+  newElem.innerHTML = secondAttributeOrginalInnerHTML;
+  secondAttribute = document.getElementById("second-attribute");
+  secondAttribute.parentNode.replaceChild(newElem, secondAttribute);
+  check_if_second_attribute_alert_should_be_shown();
+}
+
+function switch_to_attribute_value_mode() {
+  let secondAttributeDiv = document.getElementById("second-attribute-div");
+  let secondAttribute = document.getElementById("second-attribute");
+  secondAttributeDiv.style.display = "block";
+
+  let newElem = document.createElement("input");
+  newElem.setAttribute("id", "second-attribute");
+  newElem.setAttribute(
+    "class",
+    "w-full p-2 bg-white border border-[#cccccc] rounded"
+  );
+  secondAttribute = document.getElementById("second-attribute");
+  secondAttribute.parentNode.replaceChild(newElem, secondAttribute);
+  check_if_second_attribute_alert_should_be_shown();
+}
 
 function check_if_second_attribute_alert_should_be_shown() {
   let secondAttribute = document.getElementById("second-attribute");
   let valueIsRequired = document.getElementById("value-is-required");
   secondAttribute.addEventListener("change", function () {
     check_if_second_attribute_alert_should_be_shown();
+    check_if_upper_modal_save_button_should_be_actived();
   });
   if (operatorValue.value == "Attribute value") {
     if (!secondAttribute.value) {
@@ -257,7 +286,7 @@ function check_if_second_attribute_alert_should_be_shown() {
 // END change second attribute when operator value change
 
 /* END operator change events */
-function save_upper_modal(mode = "if",id) {
+function save_upper_modal(mode = "if", id = false) {
   let conditionSentence;
   let selects = upperModal.querySelectorAll("select");
   let secondAttribute = upperModal.querySelector("#second-attribute");
@@ -275,18 +304,28 @@ function save_upper_modal(mode = "if",id) {
     default:
       conditionSentence = conditionSentence + " " + selects[3].value;
   }
-  let conditionState = {
-    id: unique_id_generator(),
-    attribute: selects[0].value,
-    operator: selects[1].value,
-    operatorValue: selects[2].value,
-    secondAttribute: secondAttribute.value,
-    sentence: conditionSentence,
-    mode: mode,
-  };
-  if(id){
+
+  if (id) {
+    let conditionState = {
+      id: +(id),
+      attribute: selects[0].value,
+      operator: selects[1].value,
+      operatorValue: selects[2].value,
+      secondAttribute: secondAttribute.value,
+      sentence: conditionSentence,
+      mode,
+    };
     localStorage.setItem(id, JSON.stringify(conditionState));
-  }else{
+  } else {
+    let conditionState = {
+      id: unique_id_generator(),
+      attribute: selects[0].value,
+      operator: selects[1].value,
+      operatorValue: selects[2].value,
+      secondAttribute: secondAttribute.value,
+      sentence: conditionSentence,
+      mode,
+    };
     localStorage.setItem(latestId, JSON.stringify(conditionState));
   }
 }
@@ -306,12 +345,14 @@ function persist_rules_state(mode = "if") {
         create_new_sentence_and_append(ifSentences, index);
       }
     }
-
+    // TODO 
     // ifSummary.innerHTML += newIfSentence + " AND ";
+
     // END if
   } else if (mode == "then") {
     // START then
     let thenSentences = document.getElementById("then-sentences");
+    thenSentences.innerHTML = "";
     for (let index = 0; index <= latestId; index++) {
       if (
         localStorage.getItem(index) &&
@@ -325,6 +366,7 @@ function persist_rules_state(mode = "if") {
   } else if (mode == "else") {
     // START else
     let elseSentences = document.getElementById("else-sentences");
+    elseSentences.innerHTML = "";
     for (let index = 0; index <= latestId; index++) {
       if (
         localStorage.getItem(index) &&
@@ -351,16 +393,26 @@ function load_upper_modal(id) {
   let attribute = document.getElementById("attribute");
   let operator = document.getElementById("operator");
   let operatorValue = document.getElementById("operator-value");
-  let secondAttribute = document.getElementById("second-attribute");
   change_selected_option_by_text(attribute, data.attribute);
   change_selected_option_by_text(operator, data.operator);
   change_selected_option_by_text(operatorValue, data.operatorValue);
-  if(data.operatorValue == "Attribute value"){
+
+
+  if (data.operatorValue == "Attribute value") {
+    switch_to_attribute_value_mode();
+    let secondAttribute = document.getElementById("second-attribute");
     secondAttribute.value = data.secondAttribute;
-  }else{
+  } else if (data.operatorValue == "Blank") {
+    switch_to_blank_mode();
+  } else {
+    switch_to_attribute_mode();
+    let secondAttribute = document.getElementById("second-attribute");
     change_selected_option_by_text(secondAttribute, data.secondAttribute);
   }
+
+
 }
+
 
 function change_selected_option_by_text(selectNode, text) {
   const options = Array.from(selectNode.options);
@@ -369,27 +421,29 @@ function change_selected_option_by_text(selectNode, text) {
 }
 
 /* START Context menu */
-let ifContextMenu = document.getElementById("if-context-menu");
+let contextMenu = document.getElementById("context-menu");
 let ifSentencesContainer = document.getElementById("if-sentences-container");
-ifSentencesContainer.addEventListener("contextmenu", show_if_context_menu);
-document.body.addEventListener("click", hide_if_context_menu);
-
 let latestElementRightClick;
-function show_if_context_menu(e) {
+ifSentencesContainer.addEventListener("contextmenu", (e) => {
   latestElementRightClick = e.target.id;
-  e.preventDefault();
-  e.stopPropagation();
-  if (ifContextMenu.style.display === "none") {
-    ifContextMenu.style.display = "block";
-  }
-  ifContextMenu.style.top = e.clientY + "px";
-  ifContextMenu.style.left = e.clientX + "px";
-}
+  show_context_menu(e, contextMenu, "if");
+});
+document.body.addEventListener("click", (e) => {
+  hide_context_menu(e, contextMenu);
+});
 
-function hide_if_context_menu(e) {
-  e.stopPropagation();
-  ifContextMenu.style.display = "none";
-}
+let thenSentencesContainer = document.getElementById("then-sentences-container")
+let elseSentencesContainer = document.getElementById("else-sentences-container")
+thenSentencesContainer.addEventListener("contextmenu", (e) => {
+  latestElementRightClick = e.target.id;
+  show_context_menu(e, contextMenu, "then");
+});
+elseSentencesContainer.addEventListener("contextmenu", (e) => {
+  latestElementRightClick = e.target.id;
+  show_context_menu(e, contextMenu, "else");
+})
+
+
 
 let addMenu = document.getElementById("add");
 let editMenu = document.getElementById("edit");
@@ -400,17 +454,55 @@ let ungroupMenu = document.getElementById("ungroup");
 deleteMenu.addEventListener("click", function () {
   localStorage.removeItem(latestElementRightClick);
   persist_rules_state("if");
+  persist_rules_state("then");
+  persist_rules_state("else");
 });
 
 addMenu.addEventListener("click", function () {
-  open_modal(upperModal);
+  open_modal(upperModal, addMenu.dataset.mode);
 });
 
 editMenu.addEventListener("click", function () {
+  open_modal(upperModal, editMenu.dataset.mode, latestElementRightClick);
   console.log(latestElementRightClick);
-  open_modal(upperModal,"if",latestElementRightClick);
   load_upper_modal(latestElementRightClick);
 });
+
+function reset_upper_modal() {
+  switch_to_attribute_mode();
+  let selects = upperModal.querySelectorAll("select");
+  selects[0].querySelectorAll('option')[0].selected = 'selected';
+  selects[1].querySelectorAll('option')[0].selected = 'selected';
+  selects[2].querySelectorAll('option')[1].selected = 'selected';
+  selects[3].querySelectorAll('option')[0].selected = 'selected';
+}
+
+
+function show_context_menu(e, contextMenu, mode = "if") {
+  e.preventDefault();
+  e.stopPropagation();
+  if (contextMenu.style.display === "none") {
+    contextMenu.style.display = "block";
+  }
+  contextMenu.style.top = e.clientY + "px";
+  contextMenu.style.left = e.clientX + "px";
+
+  addMenu.dataset.mode = mode;
+  editMenu.dataset.mode = mode;
+  deleteMenu.dataset.mode = mode;
+  if (mode == "then" || "else") {
+    groupMenu.style.display = "none";
+    ungroupMenu.style.display = "none";
+  } else if (mode == "if") {
+    groupMenu.style.display = "block";
+    ungroupMenu.style.display = "block";
+  }
+}
+
+function hide_context_menu(e, contextMenu) {
+  e.stopPropagation();
+  contextMenu.style.display = "none";
+}
 
 /* END Context menu */
 
