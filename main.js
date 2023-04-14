@@ -540,42 +540,83 @@ result is
 
 // !(5 OR 6) OR (1 AND 2)
 
-let data = {
+let logical_operator_data_structure = {
+    id: 1,
     NOR: false,
     operator: "OR",
     nodes: [5, 6],
     childs: [
         {
+            id: 2,
             NOR: false,
             operator: "AND",
             nodes: [1, 2],
             childs: [
                 {
+                    id: 3,
                     NOR: false,
                     operator: "AND",
                     nodes: [12, 13],
                     childs: null,
                 },
                 {
+                    id: 4,
                     NOR: false,
                     operator: "AND",
                     nodes: [14, 15],
                     childs: null,
                 },
+                {
+                    id: 8,
+                    NOR: false,
+                    operator: "AND",
+                    nodes: [14, 15],
+                    childs: [
+                        {
+                            id: 23,
+                            NOR: false,
+                            operator: "AND",
+                            nodes: [12, 13],
+                            childs: null,
+                        },
+                        {
+                            id: 24,
+                            NOR: false,
+                            operator: "AND",
+                            nodes: [14, 15],
+                            childs: null,
+                        },
+                        {
+                            id: 26,
+                            NOR: false,
+                            operator: "AND",
+                            nodes: [14, 15],
+                            childs: null,
+                        },
+                    ],
+                },
             ],
         },
         {
+            id: 5,
             NOR: false,
             operator: "AND",
             nodes: [3, 4],
+            childs: null,
+        },
+        {
+            id: 11,
+            NOR: false,
+            operator: "AND",
+            nodes: [12, 13],
             childs: null,
         },
     ],
 };
 
 let result = [];
-function create_tree(data) {
-    // there is no childs
+function create_logical_operator_data_structure_sentence(data) {
+    // there isn't any child
     if (!data.childs) {
         if (data.NOR) {
             result.push("!");
@@ -593,11 +634,11 @@ function create_tree(data) {
             result.push(")");
         }
     } else {
+        // there is a number of childs
         result.push("(");
         if (data.NOR) {
             result.push("!");
         }
-        // there is a number of child
         if (data.nodes) {
             data.nodes.forEach(function (singleNode, index, array) {
                 result.push(singleNode);
@@ -608,13 +649,67 @@ function create_tree(data) {
             result.push(data.operator);
         }
         data.childs.forEach(function (singleChild, index, array) {
-            create_tree(singleChild);
+            create_logical_operator_data_structure_sentence(singleChild);
             if (index !== array.length - 1) {
                 result.push(data.operator);
             }
         });
         result.push(")");
     }
+    return result.join(" ");
 }
-create_tree(data);
-console.log(result.join(" "));
+
+console.log(
+    create_logical_operator_data_structure_sentence(
+        logical_operator_data_structure
+    )
+);
+
+function insert_logical_operator_data_structure(parentId = null, object) {}
+
+function update_logical_operator_data_structure(id, object) {
+}
+
+
+function delete_logical_operator_data_structure(data,id) {
+   let indexArray = find(data, id);
+   console.log(indexArray);
+   indexArray.forEach(function(singleIndex){
+      console.log(data[Object.keys(data)[singleIndex]]);
+   })
+}
+
+delete_logical_operator_data_structure(logical_operator_data_structure,11)
+
+
+function find(data, id) {
+    let finIndex = [];
+    function find_node_in_logical_operator_data_structure(
+        data,
+        dataId,
+        currentIndex = 0
+    ) {
+        if (data.id == dataId) {
+            finIndex.push(currentIndex);
+            // find in root
+        } else {
+            if (data.childs) {
+                finIndex.push(currentIndex);
+                let oldlen = finIndex.length;
+                data.childs.forEach(function (singleNode, index) {
+                    find_node_in_logical_operator_data_structure(
+                        singleNode,
+                        dataId,
+                        index
+                    );
+                });
+                let newlen = finIndex.length;
+                if (newlen == oldlen) {
+                    finIndex.pop();
+                }
+            }
+        }
+    }
+    find_node_in_logical_operator_data_structure(data, id);
+    return finIndex;
+}
