@@ -563,34 +563,34 @@ let logical_operator_data_structure = {
                     id: 4,
                     NOR: false,
                     operator: "AND",
-                    nodes: [14, 15],
+                    nodes: [5.5, 71],
                     childs: null,
                 },
                 {
                     id: 8,
                     NOR: false,
                     operator: "AND",
-                    nodes: [14, 15],
+                    nodes: [1.5, 999],
                     childs: [
                         {
                             id: 23,
                             NOR: false,
                             operator: "AND",
-                            nodes: [12, 13],
+                            nodes: [0, 83],
                             childs: null,
                         },
                         {
                             id: 24,
                             NOR: false,
                             operator: "AND",
-                            nodes: [14, 15],
+                            nodes: [442, 35],
                             childs: null,
                         },
                         {
                             id: 26,
                             NOR: false,
                             operator: "AND",
-                            nodes: [14, 15],
+                            nodes: [87, 65],
                             childs: null,
                         },
                     ],
@@ -665,26 +665,62 @@ console.log(
     )
 );
 
-function insert_logical_operator_data_structure(parentId = null, object) {}
+function insert_logical_operator_data_structure(parentId = null, object) { }
 
 function update_logical_operator_data_structure(id, object) {
 }
 
 
-function delete_logical_operator_data_structure(data,id) {
-   let indexArray = find(data, id);
-   console.log(indexArray);
-   indexArray.forEach(function(singleIndex){
-      console.log(data[Object.keys(data)[singleIndex]]);
-   })
+function delete_logical_operator_data_structure(data, id) {
+    let indexArray = index_array_node_in_logical_operator_data_structure(data, id);
+    //    data.childs[2] = null;
+    //    console.log(data.childs[0].childs[2].childs[0]);
+    indexArray.forEach(function (singleIndex) {
+
+    })
 }
 
-delete_logical_operator_data_structure(logical_operator_data_structure,11)
+delete_logical_operator_data_structure(logical_operator_data_structure, 11)
 
 
-function find(data, id) {
+
+
+function group_logical_operator_data_structure(data, ids) { }
+function ungroup_logical_operator_data_structure(data, ids) { }
+
+function select_node_in_logical_operator_data_structure(data, indexArray) {
+    if (indexArray.length == 0) {
+        return false;
+    }
+    if (indexArray.length == 1) {
+        return data;
+    }
+    let result = data;
+    if (indexArray.length >= 2) {
+        result = logical_operator_data_structure;
+        indexArray.forEach(function (singleIndex, index) {
+            if (index === indexArray.length - 1) {
+                result = result[singleIndex];
+            } else if (index === 0) {
+                result = result.childs;
+            } else {
+                result = result[singleIndex];
+                result = result.childs;
+            }
+        })
+    }
+    return result;
+}
+
+let change = select_node_in_logical_operator_data_structure(logical_operator_data_structure, index_array_node_in_logical_operator_data_structure(logical_operator_data_structure, 2))
+change.NOR = "yechizi";
+console.log(logical_operator_data_structure);
+
+
+
+function index_array_node_in_logical_operator_data_structure(data, id) {
     let finIndex = [];
-    function find_node_in_logical_operator_data_structure(
+    function find(
         data,
         dataId,
         currentIndex = 0
@@ -697,7 +733,7 @@ function find(data, id) {
                 finIndex.push(currentIndex);
                 let oldlen = finIndex.length;
                 data.childs.forEach(function (singleNode, index) {
-                    find_node_in_logical_operator_data_structure(
+                    find(
                         singleNode,
                         dataId,
                         index
@@ -710,6 +746,19 @@ function find(data, id) {
             }
         }
     }
-    find_node_in_logical_operator_data_structure(data, id);
+    find(data, id);
     return finIndex;
 }
+
+
+// let test = logical_operator_data_structure;
+// test.childs[2] = null;
+// // logical_operator_data_structure.childs = null;
+// console.log(logical_operator_data_structure);
+
+// console.log(logical_operator_data_structure['childs'][0]['childs'][0]);
+// let test = logical_operator_data_structure.childs[0];
+// console.log(typeof(test));
+// test.id = 22;
+// console.log(logical_operator_data_structure);
+
