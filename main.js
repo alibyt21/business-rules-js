@@ -512,34 +512,7 @@ function hide_context_menu(e, contextMenu) {
 
 /* END Context menu */
 
-/*
-  {
-    NOR : false,
-    operator : OR,
-    nodes : null,
-    childs : {
-      {
-        NOR : false
-        operator : AND,
-        nodes : [1,2],
-        childs : null
-      },
-      {
-        NOR : false
-        operator : AND,
-        nodes : [3,4],
-        childs : null
-      }
-    }
-  }
-
-result is 
-    (1 AND 2 AND 3 AND !(5 OR 6 OR (7 AND 9)))
-    (1 AND 2) OR (3 AND 4)
-*/
-
-// !(5 OR 6) OR (1 AND 2)
-
+/* START Logic of data structure */
 let logical_operator_data_structure = {
     id: 1,
     NOR: false,
@@ -665,30 +638,49 @@ console.log(
     )
 );
 
-function insert_logical_operator_data_structure(parentId = null, object) { }
-
-function update_logical_operator_data_structure(id, object) {
+function insert_logical_operator_data_structure(data, parentId = false, object) {
+    let parent = select_node_in_logical_operator_data_structure(data, parentId);
+    if (parent) {
+        parent.childs.push(object);
+    } else {
+        data.childs.push(object);
+    }
 }
 
+function update_logical_operator_data_structure(data, id, object) {
+    let result = select_node_in_logical_operator_data_structure(data, id);
+    result.NOR = object.NOR || result.NOR;
+    result.operator = object.operator || result.operator;
+    result.nodes = object.nodes || result.nodes;
+    result.childs = object.childs || result.childs;
+}
 
 function delete_logical_operator_data_structure(data, id) {
-    let indexArray = index_array_node_in_logical_operator_data_structure(data, id);
-    //    data.childs[2] = null;
-    //    console.log(data.childs[0].childs[2].childs[0]);
-    indexArray.forEach(function (singleIndex) {
-
-    })
+    let parent = select_node_in_logical_operator_data_structure(data, id, true);
+    if (parent) {
+        let newChild = [];
+        parent.childs = parent.childs.forEach(function (singleChild) {
+            if (singleChild.id == id) {
+                return;
+            }
+            newChild.push(singleChild);
+        });
+        parent.childs = newChild;
+    } else {
+        // node is root
+        logical_operator_data_structure = null;
+    }
 }
-
-delete_logical_operator_data_structure(logical_operator_data_structure, 11)
-
-
-
 
 function group_logical_operator_data_structure(data, ids) { }
 function ungroup_logical_operator_data_structure(data, ids) { }
 
-function select_node_in_logical_operator_data_structure(data, indexArray) {
+function select_node_in_logical_operator_data_structure(data, id, parentMode = false) {
+    let indexArray = index_array_node_in_logical_operator_data_structure(data, id);
+
+    if (parentMode) {
+        indexArray.pop();
+    }
     if (indexArray.length == 0) {
         return false;
     }
@@ -711,12 +703,6 @@ function select_node_in_logical_operator_data_structure(data, indexArray) {
     }
     return result;
 }
-
-let change = select_node_in_logical_operator_data_structure(logical_operator_data_structure, index_array_node_in_logical_operator_data_structure(logical_operator_data_structure, 2))
-change.NOR = "yechizi";
-console.log(logical_operator_data_structure);
-
-
 
 function index_array_node_in_logical_operator_data_structure(data, id) {
     let finIndex = [];
@@ -749,16 +735,30 @@ function index_array_node_in_logical_operator_data_structure(data, id) {
     find(data, id);
     return finIndex;
 }
+/* END Logic of data structure */
 
 
-// let test = logical_operator_data_structure;
-// test.childs[2] = null;
-// // logical_operator_data_structure.childs = null;
-// console.log(logical_operator_data_structure);
+/* START elements factory */
+function create_AND_OR_NOT_element() {
 
-// console.log(logical_operator_data_structure['childs'][0]['childs'][0]);
-// let test = logical_operator_data_structure.childs[0];
-// console.log(typeof(test));
-// test.id = 22;
-// console.log(logical_operator_data_structure);
+    document.body.appendChild(newElem);
+}
 
+
+
+
+function create_if_elements_by_data(data) {
+
+}
+
+function create_elements_of_one_node_of_logical_operator_data_structure(parendNode) {
+    let newElem = document.createElement("div");
+    newElem.setAttribute("class", "bg-[#78d4f3] w-full  my-0 px-3 py-2 border-t-[1px] border-b-[1px] border-solid border-gray-200");
+    newElem.innerHTML = `<select class="rounded px-2 py-1 text-xs">
+    <option value="AND">AND</option>
+    <option value="OR">OR</option>
+    <option value="NOT">NOT</option>
+</select>`;
+    
+}
+/* END elements factory */
