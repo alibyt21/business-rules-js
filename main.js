@@ -330,54 +330,55 @@ function save_upper_modal(mode = "if", id = false) {
   }
 }
 
+// TODO
 function persist_rules_state(mode = "if") {
-  if (mode == "if") {
-    // START if
-    let newIfSentence = "";
-    let ifSentences = document.getElementById("if-sentences");
-    ifSentences.innerHTML = "";
-    for (let index = 0; index <= latestId; index++) {
-      if (
-        localStorage.getItem(index) &&
-        !document.getElementById(JSON.parse(localStorage.getItem(index)).id) &&
-        JSON.parse(localStorage.getItem(index)).mode == mode
-      ) {
-        create_new_sentence_and_append(ifSentences, index);
-      }
-    }
-    // TODO
-    // ifSummary.innerHTML += newIfSentence + " AND ";
+  // if (mode == "if") {
+  //   // START if
+  //   let newIfSentence = "";
+  //   let ifSentences = document.getElementById("if-sentences");
+  //   ifSentences.innerHTML = "";
+  //   for (let index = 0; index <= latestId; index++) {
+  //     if (
+  //       localStorage.getItem(index) &&
+  //       !document.getElementById(JSON.parse(localStorage.getItem(index)).id) &&
+  //       JSON.parse(localStorage.getItem(index)).mode == mode
+  //     ) {
+  //       create_new_sentence_and_append(ifSentences, index);
+  //     }
+  //   }
+  //   // TODO
+  //   // ifSummary.innerHTML += newIfSentence + " AND ";
 
-    // END if
-  } else if (mode == "then") {
-    // START then
-    let thenSentences = document.getElementById("then-sentences");
-    thenSentences.innerHTML = "";
-    for (let index = 0; index <= latestId; index++) {
-      if (
-        localStorage.getItem(index) &&
-        !document.getElementById(JSON.parse(localStorage.getItem(index)).id) &&
-        JSON.parse(localStorage.getItem(index)).mode == mode
-      ) {
-        create_new_sentence_and_append(thenSentences, index);
-      }
-    }
-    // END then
-  } else if (mode == "else") {
-    // START else
-    let elseSentences = document.getElementById("else-sentences");
-    elseSentences.innerHTML = "";
-    for (let index = 0; index <= latestId; index++) {
-      if (
-        localStorage.getItem(index) &&
-        !document.getElementById(JSON.parse(localStorage.getItem(index)).id) &&
-        JSON.parse(localStorage.getItem(index)).mode == mode
-      ) {
-        create_new_sentence_and_append(elseSentences, index);
-      }
-    }
-    // END else
-  }
+  //   // END if
+  // } else if (mode == "then") {
+  //   // START then
+  //   let thenSentences = document.getElementById("then-sentences");
+  //   thenSentences.innerHTML = "";
+  //   for (let index = 0; index <= latestId; index++) {
+  //     if (
+  //       localStorage.getItem(index) &&
+  //       !document.getElementById(JSON.parse(localStorage.getItem(index)).id) &&
+  //       JSON.parse(localStorage.getItem(index)).mode == mode
+  //     ) {
+  //       create_new_sentence_and_append(thenSentences, index);
+  //     }
+  //   }
+  //   // END then
+  // } else if (mode == "else") {
+  //   // START else
+  //   let elseSentences = document.getElementById("else-sentences");
+  //   elseSentences.innerHTML = "";
+  //   for (let index = 0; index <= latestId; index++) {
+  //     if (
+  //       localStorage.getItem(index) &&
+  //       !document.getElementById(JSON.parse(localStorage.getItem(index)).id) &&
+  //       JSON.parse(localStorage.getItem(index)).mode == mode
+  //     ) {
+  //       create_new_sentence_and_append(elseSentences, index);
+  //     }
+  //   }
+  //   // END else
+  // }
 }
 
 function create_new_sentence_and_append(parentNode, index) {
@@ -420,9 +421,55 @@ function change_selected_option_by_text(selectNode, text) {
 let contextMenu = document.getElementById("context-menu");
 let ifSentencesContainer = document.getElementById("if-sentences-container");
 let latestElementRightClick;
+
+// TODO
+ifSentencesContainer.addEventListener("click", (e) => {
+  if (!(e.ctrlKey)) {
+    let allDivSelectedElem = document.getElementsByClassName("div-selected");
+    console.log(allDivSelectedElem);
+    for (let item of allDivSelectedElem) {
+      item.classList.remove("div-selected");
+    }
+    e.target.classList.add("div-selected");
+
+  } else {
+    // ctrl pressed
+    e.target.classList.add("div-selected");
+    let allDivSelectedElem = document.getElementsByClassName("div-selected");
+    console.log(allDivSelectedElem);
+  }
+})
+
+setInterval(function(){
+  let allDivSelectedElem = document.getElementsByClassName("div-selected");
+  console.log(allDivSelectedElem);
+},1000)
+
 ifSentencesContainer.addEventListener("contextmenu", (e) => {
-  latestElementRightClick = e.target.id;
+
+  e.preventDefault();
+  e.stopPropagation();
+
+  if (!(e.target.classList.contains("div-selected"))) {
+    return;
+  }
+
+  targetId = e.target.parentNode.id;
+  if (targetId.includes("if-sentence-complete")) {
+    latestElementRightClick = {
+      id: targetId.replace("if-sentence-complete-", ""),
+      node: null
+    }
+  } else if (targetId.includes("if-sentence")) {
+    latestElementRightClick = {
+      id: targetId.replace("if-sentence-", ""),
+      node: e.target.innerHTML
+    }
+  }
+
+
   show_context_menu(e, contextMenu, "if");
+
 });
 document.body.addEventListener("click", (e) => {
   hide_context_menu(e, contextMenu);
@@ -450,11 +497,17 @@ let groupMenu = document.getElementById("group");
 let ungroupMenu = document.getElementById("ungroup");
 
 deleteMenu.addEventListener("click", function () {
+  if (latestElementRightClick.node) {
+    delete_mini_node_logical_operator_data_structure(logical_operator_data_structure, latestElementRightClick.id, latestElementRightClick.node)
+  } else {
+    delete_logical_operator_data_structure(logical_operator_data_structure, latestElementRightClick.id);
+  }
   localStorage.removeItem(latestElementRightClick);
   persist_rules_state("if");
   persist_rules_state("then");
   persist_rules_state("else");
 });
+
 
 addMenu.addEventListener("click", function () {
   open_modal(upperModal, addMenu.dataset.mode);
@@ -476,8 +529,7 @@ function reset_upper_modal() {
 }
 
 function show_context_menu(e, contextMenu, mode = "if") {
-  e.preventDefault();
-  e.stopPropagation();
+
   if (contextMenu.style.display === "none") {
     contextMenu.style.display = "block";
   }
@@ -506,53 +558,53 @@ function hide_context_menu(e, contextMenu) {
 /* START Logic of data structure */
 let logical_operator_data_structure = {
   id: 1,
-  NOR: false,
+  NOT: false,
   operator: "OR",
   nodes: [5, 6],
   childs: [
     {
       id: 2,
-      NOR: false,
+      NOT: false,
       operator: "AND",
       nodes: [1, 2],
       childs: [
         {
           id: 3,
-          NOR: false,
+          NOT: false,
           operator: "AND",
           nodes: [12, 13],
           childs: null,
         },
         {
           id: 4,
-          NOR: false,
+          NOT: false,
           operator: "AND",
           nodes: [5.5, 71],
           childs: null,
         },
         {
           id: 8,
-          NOR: false,
+          NOT: false,
           operator: "AND",
           nodes: [1.5, 999],
           childs: [
             {
               id: 23,
-              NOR: false,
+              NOT: false,
               operator: "AND",
               nodes: [0, 83],
               childs: null,
             },
             {
               id: 24,
-              NOR: false,
+              NOT: false,
               operator: "AND",
               nodes: [442, 35],
               childs: null,
             },
             {
               id: 26,
-              NOR: false,
+              NOT: false,
               operator: "AND",
               nodes: [87, 65],
               childs: null,
@@ -563,14 +615,14 @@ let logical_operator_data_structure = {
     },
     {
       id: 5,
-      NOR: false,
-      operator: "AND",
+      NOT: false,
+      operator: "OR",
       nodes: [3, 4],
       childs: null,
     },
     {
       id: 11,
-      NOR: false,
+      NOT: false,
       operator: "AND",
       nodes: ["اثغ", "نخ"],
       childs: null,
@@ -582,7 +634,7 @@ let result = [];
 function create_logical_operator_data_structure_sentence(data) {
   // there isn't any child
   if (!data.childs) {
-    if (data.NOR) {
+    if (data.NOT) {
       result.push("!");
     }
     if (data.nodes.length >= 2) {
@@ -600,7 +652,7 @@ function create_logical_operator_data_structure_sentence(data) {
   } else {
     // there is a number of childs
     result.push("(");
-    if (data.NOR) {
+    if (data.NOT) {
       result.push("!");
     }
     if (data.nodes) {
@@ -623,18 +675,14 @@ function create_logical_operator_data_structure_sentence(data) {
   return result.join(" ");
 }
 
-console.log(
-  create_logical_operator_data_structure_sentence(
-    logical_operator_data_structure
-  )
-);
+
 
 function insert_logical_operator_data_structure(
   data,
   parentId = false,
   object
 ) {
-  let parent = select_node_in_logical_operator_data_structure(data, parentId);
+  let parent = select_in_logical_operator_data_structure(data, parentId);
   if (parent) {
     parent.childs.push(object);
   } else {
@@ -643,18 +691,19 @@ function insert_logical_operator_data_structure(
 }
 
 function update_logical_operator_data_structure(data, id, object) {
-  let result = select_node_in_logical_operator_data_structure(data, id);
-  result.NOR = object.NOR || result.NOR;
+  let result = select_in_logical_operator_data_structure(data, id);
+  result.NOT = object.NOT || result.NOT;
   result.operator = object.operator || result.operator;
   result.nodes = object.nodes || result.nodes;
   result.childs = object.childs || result.childs;
+  rebuild_page();
 }
 
 function delete_logical_operator_data_structure(data, id) {
-  let parent = select_node_in_logical_operator_data_structure(data, id, true);
+  let parent = select_in_logical_operator_data_structure(data, id, true);
   if (parent) {
     let newChild = [];
-    parent.childs = parent.childs.forEach(function (singleChild) {
+    parent.childs.forEach(function (singleChild) {
       if (singleChild.id == id) {
         return;
       }
@@ -665,12 +714,29 @@ function delete_logical_operator_data_structure(data, id) {
     // node is root
     logical_operator_data_structure = null;
   }
+  rebuild_page();
 }
 
-function group_logical_operator_data_structure(data, ids) {}
-function ungroup_logical_operator_data_structure(data, ids) {}
+function delete_mini_node_logical_operator_data_structure(data, id, nodeValue) {
+  let bigNode = select_in_logical_operator_data_structure(data, id);
+  let newNodes = [];
 
-function select_node_in_logical_operator_data_structure(
+  bigNode.nodes.forEach(function (singleNode) {
+    if (singleNode == nodeValue) {
+      return;
+    }
+    newNodes.push(singleNode);
+  });
+  bigNode.nodes = newNodes;
+  console.log(newNodes);
+
+  rebuild_page();
+}
+
+function group_logical_operator_data_structure(data, ids) { }
+function ungroup_logical_operator_data_structure(data, ids) { }
+
+function select_in_logical_operator_data_structure(
   data,
   id,
   parentMode = false
@@ -736,71 +802,87 @@ function create_AND_OR_NOT_element() {
   document.body.appendChild(newElem);
 }
 
-function create_if_elements_by_data(data) {}
+function create_if_elements_by_data(data) { }
 
 function create_elements_of_one_node_of_logical_operator_data_structure(
-  data,parendNode
+  data, parendNode
 ) {
-    //
-    let newElemIfSentenceComplete = document.createElement("div");
-    newElemIfSentenceComplete.setAttribute("class","if-sentence-complete");
+  //
+  let newElemIfSentenceComplete = document.createElement("div");
+  newElemIfSentenceComplete.setAttribute("class", "if-sentence-complete");
+  newElemIfSentenceComplete.setAttribute("id", "if-sentence-complete-" + data.id);
 
 
-    //
-    let newElemSelect = document.createElement("div");
-    newElemSelect.setAttribute(
-     "class",
-     "bg-[#78d4f3] w-full  my-0 px-3 py-2 border-t-[1px] border-b-[1px] border-solid border-gray-200"
-     );
-     newElemSelect.innerHTML = `<select id="` + data.id + `" class="rounded px-2 py-1 text-xs">
+  //
+  let newElemSelect = document.createElement("div");
+  newElemSelect.setAttribute(
+    "class",
+    "w-full  my-0 px-3 py-2 border border-solid border-gray-300"
+  );
+  newElemSelect.innerHTML = `<select id="operator-` + data.id + `" class="rounded px-2 py-1 text-xs">
         <option value="AND">AND</option>
         <option value="OR">OR</option>
         <option value="NOT">NOT</option>
     </select>`;
-    newElemIfSentenceComplete.appendChild(newElemSelect);
-    parendNode.appendChild(newElemIfSentenceComplete);
+  newElemIfSentenceComplete.appendChild(newElemSelect);
+  parendNode.appendChild(newElemIfSentenceComplete);
 
 
-    //
-    let newElemIfSentenceChild = document.createElement("div");
-    newElemIfSentenceChild.setAttribute("class","if-sentence-child");
-    newElemIfSentenceComplete.appendChild(newElemIfSentenceChild);
-
-    //
-    let selected = document.getElementById(data.id);
-    selected.value = data.operator;
-    
-
-    //
-    let newElemSentenceContainer = document.createElement("div");
-    newElemSentenceContainer.setAttribute("class","sentences");
-    newElemSentenceContainer.setAttribute("id","if-sentences-" + data.id);
-    newElemIfSentenceComplete.appendChild(newElemSentenceContainer);
-    
-
-    //
-    data.nodes && data.nodes.forEach(function(singleNode,index){
-        create_new_sentence(newElemSentenceContainer,singleNode,index)
-    })
+  //
+  let selected = document.getElementById("operator-" + data.id);
+  selected.value = data.operator;
 
 
-    //
-    data.childs && data.childs.forEach(function(singleChild){
-        create_elements_of_one_node_of_logical_operator_data_structure(singleChild,newElemIfSentenceChild)
-    })
+  //
+  let newElemSentenceContainer = document.createElement("div");
+  newElemSentenceContainer.setAttribute("class", "sentences");
+  newElemSentenceContainer.setAttribute("id", "if-sentence-" + data.id);
+  newElemIfSentenceComplete.appendChild(newElemSentenceContainer);
+
+  //
+  let newElemIfSentenceChild = document.createElement("div");
+  newElemIfSentenceChild.setAttribute("class", "if-sentence-child");
+  newElemIfSentenceComplete.appendChild(newElemIfSentenceChild);
+
+
+  //
+  data.childs && data.childs.forEach(function (singleChild) {
+    create_elements_of_one_node_of_logical_operator_data_structure(singleChild, newElemIfSentenceChild)
+  })
+
+  //
+  data.nodes && data.nodes.forEach(function (singleNode, index) {
+    create_new_sentence(newElemSentenceContainer, singleNode, index)
+  })
+
+
 }
 
 
-function create_new_sentence(parentNode, sentence,id) {
-    let newElem = document.createElement("div");
-    newElem.classList.add("sentence");
-    newElem.innerHTML = sentence;
-    // newElem.id = id;
-    parentNode.appendChild(newElem);
-  }
+function create_new_sentence(parentNode, sentence, id) {
+  let newElem = document.createElement("div");
+  newElem.classList.add("sentence");
+  newElem.innerHTML = sentence;
+  // newElem.id = id;
+  parentNode.appendChild(newElem);
+}
 
-create_elements_of_one_node_of_logical_operator_data_structure(logical_operator_data_structure,ifSentencesContainer)
-ifSummary.innerHTML = create_logical_operator_data_structure_sentence(
+/* END elements factory */
+
+
+function rebuild_page() {
+  result = [];
+  ifSentencesContainer.innerHTML = "";
+  ifSummary.innerHTML = "";
+  create_elements_of_one_node_of_logical_operator_data_structure(logical_operator_data_structure, ifSentencesContainer)
+  ifSummary.innerHTML = create_logical_operator_data_structure_sentence(
     logical_operator_data_structure
   );
-/* END elements factory */
+}
+
+
+rebuild_page();
+/* START logical operator data structure interactions in ui */
+
+/* END logical operator data structure interactions in ui */
+
