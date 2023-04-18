@@ -20,7 +20,8 @@
             border-right: 1px solid #ccc;
         }
 
-        #then-sentences .sentence, #else-sentences .sentence {
+        #then-sentences .sentence,
+        #else-sentences .sentence {
             padding-left: 1rem;
         }
 
@@ -143,15 +144,19 @@
                         <!-- start if sentences -->
                         <div class="pl-8 max-h-[200px] overflow-auto">
                             <div class="condition-block" id="if-sentences-container">
-                                <div
-                                    class="bg-[#78d4f3] w-full  my-0 px-3 py-2 border-t-[1px] border-b-[1px] border-solid border-gray-200 ">
-                                    <select class="rounded px-2 py-1 text-xs">
-                                        <option value="AND">AND</option>
-                                        <option value="OR">OR</option>
-                                        <option value="NOT">NOT</option>
-                                    </select>
+                                <div class="if-sentence-complete">
+                                    <div
+                                        class="bg-[#78d4f3] w-full  my-0 px-3 py-2 border-t-[1px] border-b-[1px] border-solid border-gray-200 ">
+                                        <select class="rounded px-2 py-1 text-xs">
+                                            <option value="AND">AND</option>
+                                            <option value="OR">OR</option>
+                                            <option value="NOT">NOT</option>
+                                        </select>
+                                    </div>
+                                    <div id="if-sentences" class="sentences"></div>
+                                    <div class="if-sentence-child"></div>
                                 </div>
-                                <div id="if-sentences" class="sentences"></div>
+
                             </div>
                         </div>
                         <!-- end if sentences -->
@@ -248,7 +253,7 @@
                 <div class="w-full p-7">
                     <!-- start inputs -->
                     <div class="w-full">
-                        <label class="w-full" >Attribute</label>
+                        <label class="w-full">Attribute</label>
                         <div class="w-full">
                             <select id="attribute" class="w-full p-2 bg-white border border-[#cccccc] rounded">
                                 <optgroup label="Attribute">
