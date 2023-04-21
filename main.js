@@ -1,4 +1,8 @@
 /* START helper functions */
+let latestElementRightClick = {
+    id : null,
+    node : null
+};
 let latestId = -1;
 let unique_id_generator = (function (s) {
     return function () {
@@ -155,6 +159,11 @@ lowerModalClosers.forEach(function (single) {
     });
 });
 
+ifOpener.addEventListener("click",function(){
+    latestElementRightClick.id = logical_operator_data_structure.id;
+    latestElementRightClick.node = null;
+})
+
 saveUpper.addEventListener("click", function () {
     let mode = saveUpper.dataset.mode;
     save_upper_modal(mode, latestElementRightClick.id);
@@ -289,7 +298,7 @@ function check_if_second_attribute_alert_should_be_shown() {
 // END change second attribute when operator value change
 
 /* END operator change events */
-function save_upper_modal(mode = "if", id) {
+function save_upper_modal(mode = "if", id = false) {
     let conditionSentence;
     let selects = upperModal.querySelectorAll("select");
     let secondAttribute = upperModal.querySelector("#second-attribute");
@@ -316,11 +325,14 @@ function save_upper_modal(mode = "if", id) {
             secondAttribute: secondAttribute.value,
             sentence: conditionSentence,
         };
+
         insert_logical_operator_data_structure(
             logical_operator_data_structure,
             id,
             newNode
         );
+
+
     }
 }
 
@@ -417,12 +429,11 @@ function change_selected_option_by_text(selectNode, text) {
 /* START Context menu */
 let contextMenu = document.getElementById("context-menu");
 let ifSentencesContainer = document.getElementById("if-sentences-container");
-let latestElementRightClick;
 
 // TODO
 ifSentencesContainer.addEventListener("click", (e) => {
-    if(e.target.id.includes("operator")){
-      return;
+    if (e.target.id.includes("operator")) {
+        return;
     }
     e.target.classList.add("div-selected");
     let allDivSelectedElem = document.getElementsByClassName("div-selected");
@@ -629,141 +640,7 @@ let logical_operator_data_structure = {
                     sentence: "Name is equal to Name",
                 },
             ],
-            childs: [
-                {
-                    id: 3,
-                    NOT: false,
-                    operator: "AND",
-                    nodes: [
-                        {
-                            attribute: "Name",
-                            operator: "is equal to",
-                            operatorValue: "Attribute",
-                            secondAttribute: "Name",
-                            sentence: "Name is equal to Name",
-                        },
-                        {
-                            attribute: "Name",
-                            operator: "is equal to",
-                            operatorValue: "Attribute",
-                            secondAttribute: "Name",
-                            sentence: "Name is equal to Name",
-                        },
-                    ],
-                    childs: null,
-                },
-                {
-                    id: 4,
-                    NOT: false,
-                    operator: "AND",
-                    nodes: [
-                        {
-                            attribute: "Name",
-                            operator: "is equal to",
-                            operatorValue: "Attribute",
-                            secondAttribute: "Name",
-                            sentence: "Name is equal to Name",
-                        },
-                        {
-                            attribute: "Name",
-                            operator: "is equal to",
-                            operatorValue: "Attribute",
-                            secondAttribute: "Name",
-                            sentence: "Name is equal to Name",
-                        },
-                    ],
-                    childs: null,
-                },
-                {
-                    id: 8,
-                    NOT: false,
-                    operator: "AND",
-                    nodes: [
-                        {
-                            attribute: "Name",
-                            operator: "is equal to",
-                            operatorValue: "Attribute",
-                            secondAttribute: "Name",
-                            sentence: "Name is equal to Name",
-                        },
-                        {
-                            attribute: "Name",
-                            operator: "is equal to",
-                            operatorValue: "Attribute",
-                            secondAttribute: "Name",
-                            sentence: "Name is equal to Name",
-                        },
-                    ],
-                    childs: [
-                        {
-                            id: 23,
-                            NOT: false,
-                            operator: "AND",
-                            nodes: [
-                                {
-                                    attribute: "Name",
-                                    operator: "is equal to",
-                                    operatorValue: "Attribute",
-                                    secondAttribute: "Name",
-                                    sentence: "Name is equal to Name",
-                                },
-                                {
-                                    attribute: "Name",
-                                    operator: "is equal to",
-                                    operatorValue: "Attribute",
-                                    secondAttribute: "Name",
-                                    sentence: "Name is equal to Name",
-                                },
-                            ],
-                            childs: null,
-                        },
-                        {
-                            id: 24,
-                            NOT: false,
-                            operator: "AND",
-                            nodes: [
-                                {
-                                    attribute: "Name",
-                                    operator: "is equal to",
-                                    operatorValue: "Attribute",
-                                    secondAttribute: "Name",
-                                    sentence: "Name is equal to Name",
-                                },
-                                {
-                                    attribute: "Name",
-                                    operator: "is equal to",
-                                    operatorValue: "Attribute",
-                                    secondAttribute: "Name",
-                                    sentence: "Name is equal to Name",
-                                },
-                            ],
-                            childs: null,
-                        },
-                        {
-                            id: 26,
-                            NOT: false,
-                            operator: "AND",
-                            nodes: [
-                                {
-                                    attribute: "Name",
-                                    operator: "is equal to",
-                                    operatorValue: "Attribute",
-                                    secondAttribute: "Name",
-                                    sentence: "Name is equal to Name",
-                                },
-                                {
-                                    attribute: "Name",
-                                    operator: "is equal to",
-                                    operatorValue: "Attribute",
-                                    secondAttribute: "Name",
-                                    sentence: "Name is equal to Name",
-                                },
-                            ],
-                            childs: null,
-                        },
-                    ],
-                },
-            ],
+            childs: null,
         },
         {
             id: 5,
@@ -904,11 +781,11 @@ function delete_logical_operator_data_structure(data, id) {
 
 function delete_mini_node_logical_operator_data_structure(data, id, nodeIndex) {
     let bigNode = select_in_logical_operator_data_structure(data, id);
-    bigNode.nodes.splice(nodeIndex,1);
+    bigNode.nodes.splice(nodeIndex, 1);
 }
 
-function group_logical_operator_data_structure(data, ids) {}
-function ungroup_logical_operator_data_structure(data, ids) {}
+function group_logical_operator_data_structure(data, ids) { }
+function ungroup_logical_operator_data_structure(data, ids) { }
 
 function select_in_logical_operator_data_structure(
     data,
@@ -976,7 +853,7 @@ function create_AND_OR_NOT_element() {
     document.body.appendChild(newElem);
 }
 
-function create_if_elements_by_data(data) {}
+function create_if_elements_by_data(data) { }
 
 function create_elements_of_one_node_of_logical_operator_data_structure(
     data,
@@ -1022,9 +899,11 @@ function create_elements_of_one_node_of_logical_operator_data_structure(
     newElemIfSentenceComplete.appendChild(newElemSentenceContainer);
 
     //
+
     let newElemIfSentenceChild = document.createElement("div");
     newElemIfSentenceChild.setAttribute("class", "if-sentence-child");
-    newElemIfSentenceComplete.appendChild(newElemIfSentenceChild);
+    data.childs && newElemIfSentenceComplete.appendChild(newElemIfSentenceChild);
+
 
     //
     data.childs &&
