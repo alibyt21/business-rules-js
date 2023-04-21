@@ -431,7 +431,7 @@ function change_selected_option_by_text(selectNode, text) {
 let contextMenu = document.getElementById("context-menu");
 let ifSentencesContainer = document.getElementById("if-sentences-container");
 
-// TODO
+
 ifSentencesContainer.addEventListener("click", (e) => {
     if (e.target.id.includes("operator")) {
         return;
@@ -445,6 +445,19 @@ ifSentencesContainer.addEventListener("click", (e) => {
             }
         }
     }
+});
+
+ifSentencesContainer.addEventListener("change", (e) => {
+    let id = e.target.id.replace("operator-","");
+    let chosen = select_in_logical_operator_data_structure(logical_operator_data_structure,id);
+    if(e.target.value == "NOT"){
+        chosen.NOT = true;
+    }else{
+        chosen.operator = e.target.value;
+        chosen.NOT = false;
+        console.log("hi");
+    }
+    rebuild_page();
 });
 
 // setInterval(function () {
