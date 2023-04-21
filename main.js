@@ -3,6 +3,7 @@ let latestElementRightClick = {
     id: null,
     node: null
 };
+let logical_operator_data_structure = {};
 let latestId = -1;
 let unique_id_generator = (function (s) {
     return function () {
@@ -562,6 +563,30 @@ editMenu.addEventListener("click", function () {
     load_upper_modal(latestElementRightClick);
 });
 
+groupMenu.addEventListener("click", function () {
+    if (!check_if_group_menu_should_be_shown()) {
+        return;
+    }
+    let allDivSelectedElem = document.getElementsByClassName("div-selected");
+    let id = allDivSelectedElem[0].parentNode.id.replace("if-sentence-", "");
+    let nodeIndexArray = [];
+    for (let i = 0; i < allDivSelectedElem.length; i++) {
+        nodeIndexArray.push(+(allDivSelectedElem[i].id));
+    }
+    group_logical_operator_data_structure(logical_operator_data_structure, id, nodeIndexArray);
+    rebuild_page();
+})
+
+ungroupMenu.addEventListener("click",function(){
+    if(!check_if_ungroup_menu_should_be_shown()){
+        return;
+    }
+    let allDivSelectedElem = document.getElementsByClassName("div-selected");
+    let id = allDivSelectedElem[0].parentNode.id.replace("if-sentence-complete-", "");
+    ungroup_logical_operator_data_structure(logical_operator_data_structure,id);
+    rebuild_page();
+})
+
 
 function reset_upper_modal() {
     switch_to_attribute_mode();
@@ -573,6 +598,8 @@ function reset_upper_modal() {
 }
 
 function show_context_menu(e, contextMenu, mode = "if") {
+    check_if_group_menu_should_be_shown();
+    check_if_ungroup_menu_should_be_shown();
     if (contextMenu.style.display === "none") {
         contextMenu.style.display = "block";
     }
@@ -591,6 +618,56 @@ function show_context_menu(e, contextMenu, mode = "if") {
     }
 }
 
+function check_if_group_menu_should_be_shown() {
+    let allDivSelectedElem = document.getElementsByClassName("div-selected");
+    let flag = true;
+    let previous;
+    for (let i = 0; i < allDivSelectedElem.length; i++) {
+        if (previous && allDivSelectedElem[i].parentNode.id != previous.parentNode.id) {
+            flag = false;
+        }
+        previous = allDivSelectedElem[i];
+    }
+    if (allDivSelectedElem.length <= 1) {
+        flag = false;
+    }
+    if(flag){
+        let chosen = select_in_logical_operator_data_structure(logical_operator_data_structure,allDivSelectedElem[0].parentNode.id.replace("if-sentence-",""));
+        if(chosen.nodes.length - allDivSelectedElem.length <= 1){
+            flag = false;
+        }
+    }
+    if (flag === true) {
+        groupMenu.classList.remove("not-allowed");
+        return true;
+    } else {
+        groupMenu.classList.add("not-allowed");
+        return false;
+    }
+}
+
+function check_if_ungroup_menu_should_be_shown(){
+    let flag = true;
+    let allDivSelectedElem = document.getElementsByClassName("div-selected");
+    if(allDivSelectedElem.length > 1){
+        flag = false;
+    }
+    if(!(allDivSelectedElem[0].parentNode.id.includes("if-sentence-complete-"))){
+        flag = false;
+    }
+    let parent = select_in_logical_operator_data_structure(logical_operator_data_structure,allDivSelectedElem[0].parentNode.id.replace("if-sentence-complete-",""),true);
+    if(!parent){
+        flag = false;
+    }
+    if (flag === true) {
+        ungroupMenu.classList.remove("not-allowed");
+        return true;
+    } else {
+        ungroupMenu.classList.add("not-allowed");
+        return false;
+    }
+}
+
 function hide_context_menu(e, contextMenu) {
     e.stopPropagation();
     contextMenu.style.display = "none";
@@ -599,149 +676,13 @@ function hide_context_menu(e, contextMenu) {
 /* END Context menu */
 
 /* START Logic of data structure */
-let logical_operator_data_structure = {
-    id: 1,
-    NOT: false,
-    operator: "OR",
-    nodes: [
-        {
-            attribute: "Code",
-            operator: "is equal to",
-            operatorValue: "Attribute value",
-            secondAttribute: "Name",
-            sentence: "Code is equal to Name",
-        },
-        {
-            attribute: "Name",
-            operator: "is equal to",
-            operatorValue: "Attribute",
-            secondAttribute: "Name",
-            sentence: "ALI is equal to Name",
-        },
-        {
-            attribute: "Name",
-            operator: "is equal to",
-            operatorValue: "Attribute",
-            secondAttribute: "Name",
-            sentence: "Yachi is equal to Name",
-        },
-    ],
-    childs: [
-        {
-            id: 2,
-            NOT: false,
-            operator: "AND",
-            nodes: [
-                {
-                    attribute: "Name",
-                    operator: "is equal to",
-                    operatorValue: "Attribute",
-                    secondAttribute: "Name",
-                    sentence: "gholam is equal to Name",
-                },
-                {
-                    attribute: "Name",
-                    operator: "is equal to",
-                    operatorValue: "Attribute",
-                    secondAttribute: "Name",
-                    sentence: "refigholam is equal to Name",
-                },
-            ],
-            childs: [
-                {
-                    id: 41,
-                    NOT: false,
-                    operator: "OR",
-                    nodes: [
-                        {
-                            attribute: "Name",
-                            operator: "is equal to",
-                            operatorValue: "Attribute",
-                            secondAttribute: "Name",
-                            sentence: "Name is equal to Name",
-                        },
-                        {
-                            attribute: "Name",
-                            operator: "is equal to",
-                            operatorValue: "Attribute",
-                            secondAttribute: "Name",
-                            sentence: "Name is equal to Name",
-                        },
-                    ],
-                    childs: null,
-                }
-            ],
-        },
-        {
-            id: 5,
-            NOT: false,
-            operator: "OR",
-            nodes: [
-                {
-                    attribute: "Name",
-                    operator: "is equal to",
-                    operatorValue: "Attribute",
-                    secondAttribute: "Name",
-                    sentence: "Name is equal to Name",
-                },
-                {
-                    attribute: "Name",
-                    operator: "is equal to",
-                    operatorValue: "Attribute",
-                    secondAttribute: "Name",
-                    sentence: "Name is equal to Name",
-                },
-            ],
-            childs: null,
-        },
-        {
-            id: 11,
-            NOT: false,
-            operator: "AND",
-            nodes: [
-                {
-                    attribute: "Name",
-                    operator: "is equal to",
-                    operatorValue: "Attribute",
-                    secondAttribute: "Name",
-                    sentence: "Name is equal to Name",
-                },
-                {
-                    attribute: "Name",
-                    operator: "is equal to",
-                    operatorValue: "Attribute",
-                    secondAttribute: "Name",
-                    sentence: "Name is equal to Name",
-                },
-            ],
-            childs: null,
-        },
-    ],
-};
-
 let result = [];
 function create_logical_operator_data_structure_sentence(data) {
-    if (!data) {
+    if (!data || Object.keys(data).length === 0) {
         return;
     }
     // there isn't any child
-    if (!data.childs) {
-        if (data.NOT) {
-            result.push("!");
-        }
-        if (data.nodes.length >= 2) {
-            result.push("(");
-        }
-        data.nodes.forEach(function (singleNode, index, array) {
-            result.push(singleNode.sentence);
-            if (index !== array.length - 1) {
-                result.push(data.operator);
-            }
-        });
-        if (data.nodes.length >= 2) {
-            result.push(")");
-        }
-    } else {
+    if (data.childs && data.childs.length) {
         // there is a number of childs
         result.push("(");
         if (data.NOT) {
@@ -763,12 +704,28 @@ function create_logical_operator_data_structure_sentence(data) {
             }
         });
         result.push(")");
+    } else {
+        if (data.NOT) {
+            result.push("!");
+        }
+        if (data.nodes.length >= 2) {
+            result.push("(");
+        }
+        data.nodes.forEach(function (singleNode, index, array) {
+            result.push(singleNode.sentence);
+            if (index !== array.length - 1) {
+                result.push(data.operator);
+            }
+        });
+        if (data.nodes.length >= 2) {
+            result.push(")");
+        }
     }
     return result.join(" ");
 }
 
 function insert_logical_operator_data_structure(data, id, object) {
-    if (logical_operator_data_structure) {
+    if (data && !(Object.keys(data).length === 0)) {
         let chosen = select_in_logical_operator_data_structure(data, id);
         chosen.nodes.push(object);
     } else {
@@ -931,7 +888,7 @@ function create_elements_of_one_node_of_logical_operator_data_structure(
     data,
     parendNode
 ) {
-    if (!data) {
+    if (!data || Object.keys(data).length === 0) {
         return;
     }
     //
@@ -974,7 +931,9 @@ function create_elements_of_one_node_of_logical_operator_data_structure(
 
     let newElemIfSentenceChild = document.createElement("div");
     newElemIfSentenceChild.setAttribute("class", "if-sentence-child");
-    data.childs && newElemIfSentenceComplete.appendChild(newElemIfSentenceChild);
+    if(data.childs && data.childs.length){
+        newElemIfSentenceComplete.appendChild(newElemIfSentenceChild);
+    }
 
 
     //
