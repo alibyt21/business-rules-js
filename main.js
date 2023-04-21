@@ -1,7 +1,7 @@
 /* START helper functions */
 let latestElementRightClick = {
-    id : null,
-    node : null
+    id: null,
+    node: null
 };
 let latestId = -1;
 let unique_id_generator = (function (s) {
@@ -159,7 +159,7 @@ lowerModalClosers.forEach(function (single) {
     });
 });
 
-ifOpener.addEventListener("click",function(){
+ifOpener.addEventListener("click", function () {
     latestElementRightClick.id = logical_operator_data_structure.id;
     latestElementRightClick.node = null;
 })
@@ -582,7 +582,7 @@ function show_context_menu(e, contextMenu, mode = "if") {
     addMenu.dataset.mode = mode;
     editMenu.dataset.mode = mode;
     deleteMenu.dataset.mode = mode;
-    if (mode == "then" || "else") {
+    if (mode == "then" || mode == "else") {
         groupMenu.style.display = "none";
         ungroupMenu.style.display = "none";
     } else if (mode == "if") {
@@ -616,7 +616,14 @@ let logical_operator_data_structure = {
             operator: "is equal to",
             operatorValue: "Attribute",
             secondAttribute: "Name",
-            sentence: "Name is equal to Name",
+            sentence: "ALI is equal to Name",
+        },
+        {
+            attribute: "Name",
+            operator: "is equal to",
+            operatorValue: "Attribute",
+            secondAttribute: "Name",
+            sentence: "Yachi is equal to Name",
         },
     ],
     childs: [
@@ -630,17 +637,40 @@ let logical_operator_data_structure = {
                     operator: "is equal to",
                     operatorValue: "Attribute",
                     secondAttribute: "Name",
-                    sentence: "Name is equal to Name",
+                    sentence: "gholam is equal to Name",
                 },
                 {
                     attribute: "Name",
                     operator: "is equal to",
                     operatorValue: "Attribute",
                     secondAttribute: "Name",
-                    sentence: "Name is equal to Name",
+                    sentence: "refigholam is equal to Name",
                 },
             ],
-            childs: null,
+            childs: [
+                {
+                    id: 41,
+                    NOT: false,
+                    operator: "OR",
+                    nodes: [
+                        {
+                            attribute: "Name",
+                            operator: "is equal to",
+                            operatorValue: "Attribute",
+                            secondAttribute: "Name",
+                            sentence: "Name is equal to Name",
+                        },
+                        {
+                            attribute: "Name",
+                            operator: "is equal to",
+                            operatorValue: "Attribute",
+                            secondAttribute: "Name",
+                            sentence: "Name is equal to Name",
+                        },
+                    ],
+                    childs: null,
+                }
+            ],
         },
         {
             id: 5,
@@ -743,7 +773,7 @@ function insert_logical_operator_data_structure(data, id, object) {
         chosen.nodes.push(object);
     } else {
         logical_operator_data_structure = {
-            id: 1,
+            id: unique_id_generator(),
             NOT: false,
             operator: "AND",
             nodes: [],
@@ -784,8 +814,50 @@ function delete_mini_node_logical_operator_data_structure(data, id, nodeIndex) {
     bigNode.nodes.splice(nodeIndex, 1);
 }
 
-function group_logical_operator_data_structure(data, ids) { }
-function ungroup_logical_operator_data_structure(data, ids) { }
+function group_logical_operator_data_structure(data, id, nodeIndexArray) {
+    let chosen = select_in_logical_operator_data_structure(data, id);
+    insert_child_in_logical_data_operator_structure(data, id, false, "AND");
+    let childsCount = chosen.childs.length;
+    if (nodeIndexArray) {
+        nodeIndexArray.forEach(function (nodeIndex) {
+            chosen.childs[childsCount - 1].nodes.push(chosen.nodes[nodeIndex])
+        })
+        let newNodes = [];
+        chosen.nodes.forEach(function (singleNode, index) {
+            if (nodeIndexArray.includes(index)) {
+                return;
+            }
+            newNodes.push(singleNode);
+        })
+        chosen.nodes = newNodes;
+    }
+}
+
+
+function insert_child_in_logical_data_operator_structure(data, id, NOT = false, operator = "AND") {
+    let chosen = select_in_logical_operator_data_structure(data, id);
+    chosen.childs.push({
+        id: unique_id_generator(),
+        NOT,
+        operator,
+        nodes: [],
+        childs: []
+    });
+}
+
+
+function ungroup_logical_operator_data_structure(data, id) {
+    let parent = select_in_logical_operator_data_structure(data, id, true);
+    if (!parent) {
+        return;
+    }
+    let chosen = select_in_logical_operator_data_structure(data, id);
+    chosen.nodes.forEach(function (singleNode) {
+        parent.nodes.push(singleNode);
+    });
+    delete_logical_operator_data_structure(data, id);
+}
+
 
 function select_in_logical_operator_data_structure(
     data,
