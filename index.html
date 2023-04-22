@@ -20,6 +20,10 @@
             border-right: 1px solid #ccc;
         }
 
+        .nonIf-sentences .sentence{
+            padding-left: 1rem;
+        }
+
         #then-sentences .sentence,
         #else-sentences .sentence {
             padding-left: 1rem;
@@ -177,9 +181,7 @@
 
                         <!-- start then sentences -->
                         <div class="pl-8 max-h-[200px] overflow-auto">
-                            <div class="condition-block" id="then-sentences-container">
-                                <div id="then-sentences" class="sentences"></div>
-                            </div>
+                            <div class="condition-block" id="then-sentences-container"></div>
                         </div>
                         <!-- end then sentences -->
 
@@ -200,9 +202,7 @@
 
                         <!-- start else sentences -->
                         <div class="pl-8 max-h-[200px] overflow-auto">
-                            <div class="condition-block" id="else-sentences-container">
-                                <div id="else-sentences" class="sentences"></div>
-                            </div>
+                            <div class="condition-block" id="else-sentences-container"></div>
                         </div>
                         <!-- end else sentences -->
 
