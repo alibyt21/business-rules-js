@@ -4,30 +4,8 @@ let latestElementRightClick = {
     node: null
 };
 let logical_operator_data_structure = {};
-let thenData = {
-    id: 1,
-    nodes: [
-        {
-            attribute: "Name",
-            operator: "is equal to",
-            operatorValue: "Attribute",
-            secondAttribute: "Name",
-            sentence: "Name is equal to Name",
-        }
-    ]
-}
-let elseData = {
-    id: 2,
-    nodes: [
-        {
-            attribute: "Name",
-            operator: "is equal to",
-            operatorValue: "Attribute",
-            secondAttribute: "Name",
-            sentence: "Name is equal to Name",
-        }
-    ]
-}
+let thenData = {}
+let elseData = {}
 let latestId = -1;
 let unique_id_generator = (function (s) {
     return function () {
@@ -189,6 +167,7 @@ ifOpener.addEventListener("click", function () {
     latestElementRightClick.node = null;
 })
 
+
 saveUpper.addEventListener("click", function () {
     let mode = saveUpper.dataset.mode;
     save_upper_modal(mode, latestElementRightClick);
@@ -341,14 +320,16 @@ function save_upper_modal(mode = "if", latestElementRightClick = false) {
             conditionSentence = conditionSentence + " " + selects[3].value;
     }
 
+    let newNode = {
+        attribute: selects[0].value,
+        operator: selects[1].value,
+        operatorValue: selects[2].value,
+        secondAttribute: secondAttribute.value,
+        sentence: conditionSentence,
+    };
+
     if (mode === "if") {
-        let newNode = {
-            attribute: selects[0].value,
-            operator: selects[1].value,
-            operatorValue: selects[2].value,
-            secondAttribute: secondAttribute.value,
-            sentence: conditionSentence,
-        };
+
         if (saveUpper.dataset.number) {
             // edit mode
             update_mini_node_logical_data_operator_structure(logical_operator_data_structure, latestElementRightClick.id, latestElementRightClick.node, newNode)
@@ -357,7 +338,31 @@ function save_upper_modal(mode = "if", latestElementRightClick = false) {
         insert_logical_operator_data_structure(
             logical_operator_data_structure,
             latestElementRightClick.id,
-            newNode
+            newNode,
+        );
+    } else if (mode === "then") {
+        if (saveUpper.dataset.number) {
+            // edit mode
+            update_mini_node_logical_data_operator_structure(thenData, latestElementRightClick.id, latestElementRightClick.node, newNode)
+            return;
+        }
+        insert_logical_operator_data_structure(
+            thenData,
+            latestElementRightClick.id,
+            newNode,
+            mode
+        );
+    } else if (mode === "else") {
+        if (saveUpper.dataset.number) {
+            // edit mode
+            update_mini_node_logical_data_operator_structure(elseData, latestElementRightClick.id, latestElementRightClick.node, newNode)
+            return;
+        }
+        insert_logical_operator_data_structure(
+            elseData,
+            latestElementRightClick.id,
+            newNode,
+            mode
         );
     }
 }
@@ -420,11 +425,24 @@ function create_new_sentence_and_append(parentNode, index) {
     parentNode.appendChild(newElem);
 }
 
-function load_upper_modal(latestElementRightClick) {
-    let chosen = select_in_logical_operator_data_structure(
-        logical_operator_data_structure,
-        latestElementRightClick.id
-    );
+function load_upper_modal(latestElementRightClick, mode) {
+    let chosen;
+    if (mode == "if") {
+        chosen = select_in_logical_operator_data_structure(
+            logical_operator_data_structure,
+            latestElementRightClick.id
+        );
+    } else if (mode == "then") {
+        chosen = select_in_logical_operator_data_structure(
+            thenData,
+            latestElementRightClick.id
+        );
+    } else if (mode == "else") {
+        chosen = select_in_logical_operator_data_structure(
+            elseData,
+            latestElementRightClick.id
+        );
+    }
     data = chosen.nodes[latestElementRightClick.node];
     let attribute = document.getElementById("attribute");
     let operator = document.getElementById("operator");
@@ -558,13 +576,33 @@ document.body.addEventListener("click", (e) => {
 thenSentencesContainer.addEventListener("contextmenu", (e) => {
     e.preventDefault();
     e.stopPropagation();
+    if (!e.target.classList.contains("div-selected")) {
+        return;
+    }
     latestElementRightClick.id = e.target.id;
+    targetId = e.target.parentNode.id;
+
+    latestElementRightClick = {
+        id: targetId.replace("nonIf-sentence-", ""),
+        node: e.target.id,
+    };
+
     show_context_menu(e, contextMenu, "then");
 });
 elseSentencesContainer.addEventListener("contextmenu", (e) => {
     e.preventDefault();
     e.stopPropagation();
+    if (!e.target.classList.contains("div-selected")) {
+        return;
+    }
     latestElementRightClick.id = e.target.id;
+    targetId = e.target.parentNode.id;
+
+    latestElementRightClick = {
+        id: targetId.replace("nonIf-sentence-", ""),
+        node: e.target.id,
+    };
+
     show_context_menu(e, contextMenu, "else");
 });
 
@@ -578,6 +616,7 @@ deleteMenu.addEventListener("click", function () {
     let allDivSelectedElem = document.getElementsByClassName("div-selected");
     let id;
     let node;
+    let nonIf = false;
     for (let i = 0; i < allDivSelectedElem.length; i++) {
         if (
             allDivSelectedElem[i].parentElement.id.includes(
@@ -592,13 +631,23 @@ deleteMenu.addEventListener("click", function () {
         } else if (
             allDivSelectedElem[i].parentElement.id.includes("if-sentence")
         ) {
+            nonIf = false;
             id = allDivSelectedElem[i].parentElement.id.replace(
                 "if-sentence-",
                 ""
             );
             node = allDivSelectedElem[i].id;
+        } else if (allDivSelectedElem[i].parentElement.id.includes("nonIf-sentence")) {
+            nonIf = true;
+            id = allDivSelectedElem[i].parentElement.id.replace(
+                "nonIf-sentence-",
+                ""
+            );
+            node = allDivSelectedElem[i].id;
         }
         if (node) {
+            delete_mini_node_logical_operator_data_structure(elseData, id, node);
+            delete_mini_node_logical_operator_data_structure(thenData, id, node);
             delete_mini_node_logical_operator_data_structure(
                 logical_operator_data_structure,
                 id,
@@ -611,10 +660,6 @@ deleteMenu.addEventListener("click", function () {
             );
         }
     }
-    localStorage.removeItem(latestElementRightClick);
-    persist_rules_state("if");
-    persist_rules_state("then");
-    persist_rules_state("else");
     rebuild_page();
 });
 
@@ -624,7 +669,7 @@ addMenu.addEventListener("click", function () {
 
 editMenu.addEventListener("click", function () {
     open_modal(upperModal, editMenu.dataset.mode, latestElementRightClick);
-    load_upper_modal(latestElementRightClick);
+    load_upper_modal(latestElementRightClick, editMenu.dataset.mode);
 });
 
 groupMenu.addEventListener("click", function () {
@@ -743,7 +788,7 @@ function hide_context_menu(e, contextMenu) {
 let result = [];
 function create_logical_operator_data_structure_sentence(data) {
     if (!data || Object.keys(data).length === 0) {
-        return;
+        return "";
     }
     // there isn't any child
     if (data.childs && data.childs.length) {
@@ -788,19 +833,38 @@ function create_logical_operator_data_structure_sentence(data) {
     return result.join(" ");
 }
 
-function insert_logical_operator_data_structure(data, id, object) {
+function insert_logical_operator_data_structure(data, id, object, mode = "if") {
     if (data && !(Object.keys(data).length === 0)) {
-        let chosen = select_in_logical_operator_data_structure(data, id);
-        chosen.nodes.push(object);
+        if (mode == "if") {
+            let chosen = select_in_logical_operator_data_structure(data, id);
+            chosen.nodes.push(object);
+        } else {
+            if (mode == "then") {
+                id = thenData.id;
+                let chosen = select_in_logical_operator_data_structure(data, id);
+                chosen.nodes.push(object);
+            } else if (mode == "else") {
+                id = elseData.id;
+                let chosen = select_in_logical_operator_data_structure(data, id);
+                chosen.nodes.push(object);
+            }
+        }
     } else {
-        logical_operator_data_structure = {
+        data = {
             id: unique_id_generator(),
             NOT: false,
             operator: "AND",
             nodes: [],
             childs: [],
         };
-        logical_operator_data_structure.nodes.push(object);
+        data.nodes.push(object);
+        if (mode == "if") {
+            logical_operator_data_structure = data;
+        } else if (mode == "then") {
+            thenData = data;
+        } else if (mode == "else") {
+            elseData = data;
+        }
     }
 }
 
@@ -840,7 +904,9 @@ function delete_logical_operator_data_structure(data, id) {
 
 function delete_mini_node_logical_operator_data_structure(data, id, nodeIndex) {
     let bigNode = select_in_logical_operator_data_structure(data, id);
-    bigNode.nodes.splice(nodeIndex, 1);
+    if (bigNode) {
+        bigNode.nodes.splice(nodeIndex, 1);
+    }
 }
 
 function group_logical_operator_data_structure(data, id, nodeIndexArray) {
@@ -909,7 +975,7 @@ function select_in_logical_operator_data_structure(
     }
     let result = data;
     if (indexArray.length >= 2) {
-        result = logical_operator_data_structure;
+        //result = logical_operator_data_structure;
         indexArray.forEach(function (singleIndex, index) {
             if (index === indexArray.length - 1) {
                 result = result[singleIndex];
@@ -1037,7 +1103,7 @@ function create_elements_of_one_node_of_logical_operator_data_structure(
             data.childs.forEach(function (singleChild) {
                 create_elements_of_one_node_of_logical_operator_data_structure(
                     singleChild,
-                    newElemIfSentenceChild
+                    newElemIfSentenceChild,
                 );
             });
 
@@ -1051,7 +1117,7 @@ function create_elements_of_one_node_of_logical_operator_data_structure(
                 );
             });
     } else {
-
+        parendNode.innerHTML = ""
         let newElemNonIfSentenceComplete = document.createElement("div");
 
         newElemNonIfSentenceComplete.setAttribute("class", "nonIf-sentence-complete");
@@ -1059,14 +1125,12 @@ function create_elements_of_one_node_of_logical_operator_data_structure(
             "id",
             "nonIf-sentence-complete-" + data.id
         );
-        parendNode.appendChild(newElemNonIfSentenceComplete);
-
 
         //
         let newElemSentenceContainer = document.createElement("div");
         newElemSentenceContainer.setAttribute("class", "nonIf-sentences");
         newElemSentenceContainer.setAttribute("id", "nonIf-sentence-" + data.id);
-        newElemNonIfSentenceComplete.appendChild(newElemSentenceContainer);
+
 
 
         //
@@ -1078,6 +1142,10 @@ function create_elements_of_one_node_of_logical_operator_data_structure(
                     index
                 );
             });
+
+        newElemNonIfSentenceComplete.appendChild(newElemSentenceContainer);
+        parendNode.appendChild(newElemNonIfSentenceComplete);
+
     }
 
 
@@ -1107,14 +1175,18 @@ function rebuild_page() {
         "then"
     );
     create_elements_of_one_node_of_logical_operator_data_structure(
-        thenData,
+        elseData,
         elseSentencesContainer,
         "else"
     );
+
     ifSummary.innerHTML = create_logical_operator_data_structure_sentence(
         logical_operator_data_structure
     );
-    console.log(logical_operator_data_structure);
+    // console.log(elseData);
+    // console.log(thenData);
+
+
 }
 
 rebuild_page();
