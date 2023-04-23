@@ -1,4 +1,3 @@
-/* START helper functions */
 let latestElementRightClick = {
     id: null,
     node: null
@@ -6,6 +5,15 @@ let latestElementRightClick = {
 let logical_operator_data_structure = {};
 let thenData = {}
 let elseData = {}
+let lowerModalData
+if(localStorage.getItem("data")){
+    lowerModalData = JSON.parse(localStorage.getItem("data"));
+    logical_operator_data_structure = lowerModalData.if;
+    thenData = lowerModalData.then;
+    elseData = lowerModalData.else;
+}
+
+/* START helper functions */
 let latestId = -1;
 let unique_id_generator = (function (s) {
     return function () {
@@ -38,6 +46,8 @@ let ifSummary = document.getElementById("if-summary");
 let sendNotification = document.getElementById("send-notification");
 let inputName = document.getElementById("input-name");
 let nameIsRequired = document.getElementById("name-is-required");
+
+let cancelLower = document.getElementById("lower-modal-cancel-button");
 
 let elseOperatorInnerHTML = `<optgroup label="Default value">
 <option>defaults to</option>
@@ -139,6 +149,14 @@ function check_if_name_alert_should_be_shown() {
         inputName.classList.remove("alert");
     }
 }
+
+cancelLower.addEventListener("click",function(){
+    localStorage.removeItem("data");
+    logical_operator_data_structure = {};
+    elseData = {};
+    thenData = {};
+    rebuild_page();
+})
 
 ifOpener.addEventListener("click", () => open_modal(upperModal));
 thenOpener.addEventListener("click", () => open_modal(upperModal, "then"));
@@ -1183,6 +1201,12 @@ function rebuild_page() {
     ifSummary.innerHTML = create_logical_operator_data_structure_sentence(
         logical_operator_data_structure
     );
+    lowerModalData = {
+        if : logical_operator_data_structure,
+        then : thenData,
+        else : elseData
+    }
+    localStorage.setItem("data",JSON.stringify(lowerModalData));
     // console.log(elseData);
     // console.log(thenData);
 
