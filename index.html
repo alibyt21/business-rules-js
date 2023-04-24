@@ -164,9 +164,10 @@
                         </div>
                         <!-- end if sentences -->
 
-                        <div id="if-opener"
-                            class="open-upper w-full pl-8 py-2 text-sm text-[#428bca] hover:underline cursor-pointer">
-                            Add
+                        <div id="if-opener" class="open-upper w-full pl-8 py-2 text-sm text-[#428bca] hover:underline">
+                            <button class="open-upper cursor-pointer">
+                                Add
+                            </button>
                         </div>
                     </div>
                     <!-- end if container -->
@@ -185,9 +186,10 @@
                         </div>
                         <!-- end then sentences -->
 
-                        <div id="then-opener"
-                            class="open-upper w-full ml-8 py-2 text-sm text-[#428bca] hover:underline cursor-pointer">
-                            Add
+                        <div id="then-opener" class="w-full ml-8 py-2 text-sm text-[#428bca] hover:underline">
+                            <button class="open-upper cursor-pointer">
+                                Add
+                            </button>
                         </div>
                     </div>
                     <!-- end then container -->
@@ -206,9 +208,10 @@
                         </div>
                         <!-- end else sentences -->
 
-                        <div id="else-opener"
-                            class="open-upper w-full py-2 ml-8 text-sm text-[#428bca] hover:underline cursor-pointer">
-                            Add
+                        <div id="else-opener" class="w-full py-2 ml-8 text-sm text-[#428bca] hover:underline">
+                            <button class="open-upper cursor-pointer">
+                                Add
+                            </button>
                         </div>
                     </div>
                     <!-- end else container -->
@@ -295,7 +298,7 @@
                         </div>
                     </div>
 
-                    <div class="w-full my-4">
+                    <div class="w-full my-4" div="operator-value-div">
                         <label class="w-full" id="operator-value-label">Is equal to</label>
                         <div class="w-full">
                             <select id="operator-value" class="w-full p-2 bg-white border border-[#cccccc] rounded">
@@ -319,10 +322,55 @@
                                 required.</label>
                         </div>
                     </div>
+
+                    <div class="w-full -mt-3 hidden">
+                        <div class="w-full">
+                            <table class="border border-solid border-gray-100">
+                                <thead class="border-t border-b border-solid border-gray-400">
+                                    <tr class="py-2 w-full flex text-left">
+                                        <th class="w-full flex-1 px-2"> 
+                                            <span>Value Type</span>
+                                        </th>
+                                        <th class="w-full flex-1 px-2"> 
+                                            <span>Value</span>
+                                        </th>
+                                        <th class="w-full flex-1 px-2"> 
+                                            <span>Start</span>
+                                        </th>
+                                        <th class="w-full flex-1 px-2"> 
+                                            <span>Length</span>
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody class="border-t border-b border-solid border-gray-400">
+                                    <tr class="py-2 w-full flex">
+                                        <td class="w-full flex-1 mx-2">
+                                            <select class="w-full border border-solid border-gray-400 p-2 rounded bg-white">
+                                                <option value="0">Attribute</option>
+                                                <option value="1">Text</option>
+                                            </select>
+                                        </td>
+                                        <td class="w-full flex-1 mx-2">
+                                            <select class="w-full border border-solid border-gray-400 p-2 rounded bg-white">
+                                                <optgroup label="Attributes">
+                                                    <option value="">Name</option>
+                                                    <option value="">Code</option>
+                                                </optgroup>
+                                            </select>
+                                        </td>
+                                        <td class="w-full flex-1 mx-2">
+                                            <input class="w-full border border-solid border-gray-400 px-2 py-[6px] rounded bg-white" type="number" min="1">
+                                        </td>
+                                        <td class="w-full flex-1 mx-2">
+                                            <input class="w-full border border-solid border-gray-400 px-2 py-[6px] rounded bg-white" type="number" min="1">
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
                 </div>
-
                 <div class="border border-gray-200 border-solid"></div>
-
                 <div class="w-full flex justify-end p-7 py-6">
                     <button id="save-upper" data-mode data-number
                         class="w-[140px] bg-[#1eb8eb] disabled:bg-[#a0b8c8] disabled:text-black hover:bg-[#0a6eeb] hover:text-white rounded py-2 mr-4">save</button>

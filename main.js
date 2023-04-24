@@ -6,7 +6,7 @@ let logical_operator_data_structure = {};
 let thenData = {}
 let elseData = {}
 let lowerModalData
-if(localStorage.getItem("data")){
+if (localStorage.getItem("data")) {
     lowerModalData = JSON.parse(localStorage.getItem("data"));
     logical_operator_data_structure = lowerModalData.if;
     thenData = lowerModalData.then;
@@ -150,7 +150,7 @@ function check_if_name_alert_should_be_shown() {
     }
 }
 
-cancelLower.addEventListener("click",function(){
+cancelLower.addEventListener("click", function () {
     localStorage.removeItem("data");
     logical_operator_data_structure = {};
     elseData = {};
@@ -283,6 +283,7 @@ function switch_to_attribute_mode() {
 function switch_to_attribute_value_mode() {
     let secondAttributeDiv = document.getElementById("second-attribute-div");
     let secondAttribute = document.getElementById("second-attribute");
+    console.log(secondAttribute.value);
     secondAttributeDiv.style.display = "block";
 
     let newElem = document.createElement("input");
@@ -293,27 +294,32 @@ function switch_to_attribute_value_mode() {
     );
     secondAttribute = document.getElementById("second-attribute");
     secondAttribute.parentNode.replaceChild(newElem, secondAttribute);
-    check_if_second_attribute_alert_should_be_shown();
+}
+
+function switch_to_table_mode(){
+    
 }
 
 function check_if_second_attribute_alert_should_be_shown() {
-    let secondAttribute = document.getElementById("second-attribute");
     let valueIsRequired = document.getElementById("value-is-required");
+    let secondAttribute = document.getElementById("second-attribute");
+    console.log(secondAttribute.value);
+    if (operatorValue.value == "Attribute value") {
+        if (secondAttribute && secondAttribute.value) {
+            secondAttribute.classList.remove("alert");
+            valueIsRequired.classList.add("invisible");
+        } else {
+            secondAttribute.classList.add("alert");
+            valueIsRequired.classList.remove("invisible");
+        }
+    } else {
+        secondAttribute.classList.remove("alert");
+        valueIsRequired.classList.add("invisible");
+    }
     secondAttribute.addEventListener("change", function () {
         check_if_second_attribute_alert_should_be_shown();
         check_if_upper_modal_save_button_should_be_actived();
     });
-    if (operatorValue.value == "Attribute value") {
-        if (!secondAttribute.value) {
-            secondAttribute.classList.add("alert");
-            valueIsRequired.classList.remove("invisible");
-        } else {
-            secondAttribute.classList.remove("alert");
-            valueIsRequired.classList.add("invisible");
-        }
-    } else {
-        valueIsRequired.classList.add("invisible");
-    }
 }
 
 // END change second attribute when operator value change
@@ -473,6 +479,7 @@ function load_upper_modal(latestElementRightClick, mode) {
         switch_to_attribute_value_mode();
         let secondAttribute = document.getElementById("second-attribute");
         secondAttribute.value = data.secondAttribute;
+        check_if_second_attribute_alert_should_be_shown();
     } else if (data.operatorValue == "Blank") {
         switch_to_blank_mode();
     } else {
@@ -1182,6 +1189,8 @@ function create_new_sentence(parentNode, sentence, id) {
 function rebuild_page() {
     result = [];
     ifSentencesContainer.innerHTML = "";
+    elseSentencesContainer.innerHTML = "";
+    thenSentencesContainer.innerHTML = "";
     ifSummary.innerHTML = "";
     create_elements_of_one_node_of_logical_operator_data_structure(
         logical_operator_data_structure,
@@ -1202,13 +1211,13 @@ function rebuild_page() {
         logical_operator_data_structure
     );
     lowerModalData = {
-        if : logical_operator_data_structure,
-        then : thenData,
-        else : elseData
+        if: logical_operator_data_structure,
+        then: thenData,
+        else: elseData
     }
-    localStorage.setItem("data",JSON.stringify(lowerModalData));
-    // console.log(elseData);
-    // console.log(thenData);
+    localStorage.setItem("data", JSON.stringify(lowerModalData));
+    console.log(elseData);
+    console.log(thenData);
 
 
 }
