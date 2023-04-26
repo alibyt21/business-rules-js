@@ -1218,6 +1218,27 @@ function rebuild_page() {
 }
 
 rebuild_page();
-/* START logical operator data structure interactions in ui */
 
-/* END logical operator data structure interactions in ui */
+
+
+/* START add if then block to page */
+let addIfThenButton = document.getElementById("add-if-then");
+let ifThen = document.getElementById("if-then");
+
+
+
+addIfThenButton.addEventListener("click",function(){
+    let newIfThen = ifThen.cloneNode(true);
+    console.log(newIfThen);
+    ifThen.parentNode.insertBefore(newIfThen,ifThen.nextSibling);
+})
+
+
+
+let ifThenClosers = document.querySelectorAll(".close-if-then");
+ifThenClosers.forEach(function (single) {
+    single.addEventListener("click", function () {
+        console.log(single.parentNode);
+    });
+});
+/* END add if then block to page */

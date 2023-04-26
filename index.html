@@ -148,73 +148,96 @@
                         </div>
                     </div>
 
-                    <!-- start if container -->
-                    <div id="if-container" class="w-full my-4">
-                        <div class="w-full">If</div>
-                        <div id="if-summary">
-                        </div>
+                    <div id="if-then"
+                        class="relative border broder-solid border-gray-300 px-5 rounded-xl z-[99] bg-white my-3">
+                        <!-- start if container -->
+                        <div id="if-container" class="w-full my-4">
+                            <div class="w-full">If</div>
+                            <div id="if-summary">
+                            </div>
 
-                        <div class="w-full pr-8 pt-2">
-                            <div class="w-full ml-8 border border-solid border-[#cccccc]"></div>
-                        </div>
+                            <div class="w-full pr-8 pt-2">
+                                <div class="w-full ml-8 border border-solid border-[#cccccc]"></div>
+                            </div>
 
-                        <!-- start if sentences -->
-                        <div class="pl-8 max-h-[350px] overflow-auto">
-                            <div class="condition-block" id="if-sentences-container"></div>
-                        </div>
-                        <!-- end if sentences -->
+                            <!-- start if sentences -->
+                            <div class="pl-8 max-h-[350px] overflow-auto">
+                                <div class="condition-block" id="if-sentences-container"></div>
+                            </div>
+                            <!-- end if sentences -->
 
-                        <div id="if-opener" class="open-upper w-full pl-8 py-2 text-sm text-[#428bca] hover:underline">
-                            <button class="open-upper cursor-pointer">
-                                Add
-                            </button>
+                            <div id="if-opener"
+                                class="open-upper w-full pl-8 py-2 text-sm text-[#428bca] hover:underline">
+                                <button class="open-upper cursor-pointer">
+                                    Add
+                                </button>
+                            </div>
                         </div>
+                        <!-- end if container -->
+
+                        <!-- start then container -->
+                        <div id="thenContainer" class="my-4">
+                            <div class="w-full">Then</div>
+
+                            <div class="w-full pr-8 pt-2">
+                                <div class="w-full ml-8 border border-solid border-[#cccccc]"></div>
+                            </div>
+
+                            <!-- start then sentences -->
+                            <div class="pl-8 max-h-[200px] overflow-auto">
+                                <div class="condition-block" id="then-sentences-container"></div>
+                            </div>
+                            <!-- end then sentences -->
+
+                            <div id="then-opener" class="w-full ml-8 py-2 text-sm text-[#428bca] hover:underline">
+                                <button class="open-upper cursor-pointer">
+                                    Add
+                                </button>
+                            </div>
+                        </div>
+                        <!-- end then container -->
+
+                        <!-- start close if then block -->
+                        <div class="close-if-then absolute top-4 right-4">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                                stroke="currentColor" class="w-6 h-6">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                        </div>
+                        <!-- end close if then block -->
                     </div>
-                    <!-- end if container -->
 
-                    <!-- start then container -->
-                    <div id="thenContainer" class="my-4">
-                        <div class="w-full">Then</div>
-
-                        <div class="w-full pr-8 pt-2">
-                            <div class="w-full ml-8 border border-solid border-[#cccccc]"></div>
-                        </div>
-
-                        <!-- start then sentences -->
-                        <div class="pl-8 max-h-[200px] overflow-auto">
-                            <div class="condition-block" id="then-sentences-container"></div>
-                        </div>
-                        <!-- end then sentences -->
-
-                        <div id="then-opener" class="w-full ml-8 py-2 text-sm text-[#428bca] hover:underline">
-                            <button class="open-upper cursor-pointer">
-                                Add
-                            </button>
-                        </div>
+                    <div id="add-if-then"
+                        class="flex justify-center items-center bg-[#1eb8eb] -mt-5 pt-3 rounded-b-xl py-1 text-white cursor-pointer">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                            stroke="currentColor" class="w-6 h-6">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                        </svg>
                     </div>
-                    <!-- end then container -->
 
-                    <!-- start else container -->
-                    <div id="elseContainer" class="my-4">
-                        <div class="w-full">Else</div>
+                    <div class="border broder-solid border-gray-300 my-3 px-5 rounded-xl ">
+                        <!-- start else container -->
+                        <div id="elseContainer" class="my-4">
+                            <div class="w-full">Else</div>
 
-                        <div class="w-full pr-8 pt-2">
-                            <div class="w-full ml-8 border border-solid border-[#cccccc]"></div>
+                            <div class="w-full pr-8 pt-2">
+                                <div class="w-full ml-8 border border-solid border-[#cccccc]"></div>
+                            </div>
+
+                            <!-- start else sentences -->
+                            <div class="pl-8 max-h-[200px] overflow-auto">
+                                <div class="condition-block" id="else-sentences-container"></div>
+                            </div>
+                            <!-- end else sentences -->
+
+                            <div id="else-opener" class="w-full py-2 ml-8 text-sm text-[#428bca] hover:underline">
+                                <button class="open-upper cursor-pointer">
+                                    Add
+                                </button>
+                            </div>
                         </div>
-
-                        <!-- start else sentences -->
-                        <div class="pl-8 max-h-[200px] overflow-auto">
-                            <div class="condition-block" id="else-sentences-container"></div>
-                        </div>
-                        <!-- end else sentences -->
-
-                        <div id="else-opener" class="w-full py-2 ml-8 text-sm text-[#428bca] hover:underline">
-                            <button class="open-upper cursor-pointer">
-                                Add
-                            </button>
-                        </div>
+                        <!-- end else container -->
                     </div>
-                    <!-- end else container -->
                 </div>
                 <div class="border border-gray-200 border-solid"></div>
                 <div class="w-full flex justify-end p-7 py-6">
@@ -328,16 +351,16 @@
                             <table class="border border-solid border-gray-100">
                                 <thead class="border-t border-b border-solid border-gray-400">
                                     <tr class="py-2 w-full flex text-left">
-                                        <th class="w-full flex-1 px-2"> 
+                                        <th class="w-full flex-1 px-2">
                                             <span>Value Type</span>
                                         </th>
-                                        <th class="w-full flex-1 px-2"> 
+                                        <th class="w-full flex-1 px-2">
                                             <span>Value</span>
                                         </th>
-                                        <th class="w-full flex-1 px-2"> 
+                                        <th class="w-full flex-1 px-2">
                                             <span>Start</span>
                                         </th>
-                                        <th class="w-full flex-1 px-2"> 
+                                        <th class="w-full flex-1 px-2">
                                             <span>Length</span>
                                         </th>
                                     </tr>
@@ -345,13 +368,15 @@
                                 <tbody class="border-t border-b border-solid border-gray-400">
                                     <tr class="py-2 w-full flex">
                                         <td class="w-full flex-1 mx-2">
-                                            <select class="w-full border border-solid border-gray-400 p-2 rounded bg-white">
+                                            <select
+                                                class="w-full border border-solid border-gray-400 p-2 rounded bg-white">
                                                 <option value="0">Attribute</option>
                                                 <option value="1">Text</option>
                                             </select>
                                         </td>
                                         <td class="w-full flex-1 mx-2">
-                                            <select class="w-full border border-solid border-gray-400 p-2 rounded bg-white">
+                                            <select
+                                                class="w-full border border-solid border-gray-400 p-2 rounded bg-white">
                                                 <optgroup label="Attributes">
                                                     <option value="">Name</option>
                                                     <option value="">Code</option>
@@ -359,10 +384,14 @@
                                             </select>
                                         </td>
                                         <td class="w-full flex-1 mx-2">
-                                            <input class="w-full border border-solid border-gray-400 px-2 py-[6px] rounded bg-white" type="number" min="1">
+                                            <input
+                                                class="w-full border border-solid border-gray-400 px-2 py-[6px] rounded bg-white"
+                                                type="number" min="1">
                                         </td>
                                         <td class="w-full flex-1 mx-2">
-                                            <input class="w-full border border-solid border-gray-400 px-2 py-[6px] rounded bg-white" type="number" min="1">
+                                            <input
+                                                class="w-full border border-solid border-gray-400 px-2 py-[6px] rounded bg-white"
+                                                type="number" min="1">
                                         </td>
                                     </tr>
                                 </tbody>
