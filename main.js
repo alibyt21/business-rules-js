@@ -1,21 +1,12 @@
 let latestElementRightClick = {
     id: null,
-    node: null
+    node: null,
 };
-let allData = [
-    {},
-    {},
-    {},
-]
-let ifData = {};
-let thenData = {}
-let elseData = {}
-let lowerModalData
+let allData = [{}, {}, {}];
+let lowerModalData;
 if (localStorage.getItem("data")) {
     lowerModalData = JSON.parse(localStorage.getItem("data"));
-    ifData = lowerModalData.if;
-    thenData = lowerModalData.then;
-    elseData = lowerModalData.else;
+    allData = lowerModalData.allData;
 }
 
 /* START helper functions */
@@ -37,16 +28,11 @@ let lowerModal = document.querySelector("#lower-modal");
 let upperModal = document.querySelector("#upper-modal");
 
 let upperModalClosers = document.querySelectorAll(".close-upper");
-let ifOpener = document.getElementById("if-opener");
-let thenOpener = document.getElementById("then-opener");
-let elseOpener = document.getElementById("else-opener");
 
 let lowerModalClosers = document.querySelectorAll(".close-lower");
 let lowerModalOpeners = document.querySelectorAll(".open-lower");
 
 let saveUpper = document.getElementById("save-upper");
-
-let ifSummary = document.getElementById("if-summary");
 
 let sendNotification = document.getElementById("send-notification");
 let inputName = document.getElementById("input-name");
@@ -138,7 +124,12 @@ function check_if_lower_modal_save_button_should_be_actived() {
     let lowerModalSaveButton = document.getElementById(
         "lower-modal-save-button"
     );
-    if (thenData && thenData.nodes && thenData.nodes.length && inputName.value) {
+    if (
+        allData[1] &&
+        allData[1].nodes &&
+        allData[1].nodes.length &&
+        inputName.value
+    ) {
         lowerModalSaveButton.removeAttribute("disabled");
     } else {
         lowerModalSaveButton.setAttribute("disabled", "");
@@ -157,15 +148,9 @@ function check_if_name_alert_should_be_shown() {
 
 cancelLower.addEventListener("click", function () {
     localStorage.removeItem("data");
-    ifData = {};
-    elseData = {};
-    thenData = {};
+    allData = [{}, {}, {}];
     rebuild_page();
-})
-
-ifOpener.addEventListener("click", () => open_modal(upperModal));
-thenOpener.addEventListener("click", () => open_modal(upperModal, "then"));
-elseOpener.addEventListener("click", () => open_modal(upperModal, "else"));
+});
 
 upperModalClosers.forEach(function (single) {
     single.addEventListener("click", function () {
@@ -185,15 +170,9 @@ lowerModalClosers.forEach(function (single) {
     });
 });
 
-ifOpener.addEventListener("click", function () {
-    latestElementRightClick.id = ifData.id;
-    latestElementRightClick.node = null;
-})
-
-
 saveUpper.addEventListener("click", function () {
-    let mode = saveUpper.dataset.mode;
-    save_upper_modal(mode, latestElementRightClick);
+    let allDataIndex = saveUpper.dataset.index;
+    save_upper_modal(allDataIndex, latestElementRightClick);
     close_modal(upperModal);
     rebuild_page();
 });
@@ -205,28 +184,30 @@ function close_modal(node) {
     node.children[0].style.transform = "translate(0,-100px)";
 }
 
-function open_modal(node, mode = "if", latestElementRightClick = false) {
+function open_modal(
+    node,
+    allDataIndex = false,
+    latestElementRightClick = false,
+    mode = "add"
+) {
     reset_upper_modal();
-    let operator = document.getElementById("operator");
     let saveUpper = document.getElementById("save-upper");
     node.style.opacity = 100;
     node.style.visibility = "visible";
     //first child of modal (should be modal body)
     node.children[0].style.transform = "translate(0,0)";
-    if (mode == "if") {
-        // nothing
-        saveUpper.dataset.mode = "if";
-    } else if (mode == "then") {
-        operator.innerHTML = thenOperatorInnerHTML;
-        saveUpper.dataset.mode = "then";
-    } else if (mode == "else") {
-        operator.innerHTML = elseOperatorInnerHTML;
-        saveUpper.dataset.mode = "else";
-    }
-    if (latestElementRightClick) {
+    if (mode == "edit") {
         saveUpper.dataset.number = latestElementRightClick.id;
     } else {
         delete saveUpper.dataset.number;
+    }
+
+    if (
+        (latestElementRightClick && latestElementRightClick.allDataIndex) ||
+        allDataIndex
+    ) {
+        saveUpper.dataset.index =
+            allDataIndex || latestElementRightClick.allDataIndex;
     }
 }
 
@@ -299,12 +280,9 @@ function switch_to_attribute_value_mode() {
     secondAttribute = document.getElementById("second-attribute");
     secondAttribute.parentNode.replaceChild(newElem, secondAttribute);
     check_if_second_attribute_alert_should_be_shown();
-
 }
 
-function switch_to_table_mode() {
-
-}
+function switch_to_table_mode() {}
 
 function check_if_second_attribute_alert_should_be_shown() {
     let valueIsRequired = document.getElementById("value-is-required");
@@ -330,7 +308,7 @@ function check_if_second_attribute_alert_should_be_shown() {
 // END change second attribute when operator value change
 
 /* END operator change events */
-function save_upper_modal(mode = "if", latestElementRightClick = false) {
+function save_upper_modal(allDataIndex = 0, latestElementRightClick = false) {
     let conditionSentence;
     let selects = upperModal.querySelectorAll("select");
     let secondAttribute = upperModal.querySelector("#second-attribute");
@@ -357,93 +335,22 @@ function save_upper_modal(mode = "if", latestElementRightClick = false) {
         sentence: conditionSentence,
     };
 
-    if (mode === "if") {
-
-        if (saveUpper.dataset.number) {
-            // edit mode
-            update_mini_node_logical_data_operator_structure(ifData, latestElementRightClick.id, latestElementRightClick.node, newNode)
-            return;
-        }
-        insert_logical_operator_data_structure(
-            ifData,
+    if (saveUpper.dataset.number) {
+        // edit
+        update_mini_node_logical_data_operator_structure(
+            allData[allDataIndex],
             latestElementRightClick.id,
-            newNode,
+            latestElementRightClick.node,
+            newNode
         );
-    } else if (mode === "then") {
-        if (saveUpper.dataset.number) {
-            // edit mode
-            update_mini_node_logical_data_operator_structure(thenData, latestElementRightClick.id, latestElementRightClick.node, newNode)
-            return;
-        }
-        insert_logical_operator_data_structure(
-            thenData,
-            latestElementRightClick.id,
-            newNode,
-            mode
-        );
-    } else if (mode === "else") {
-        if (saveUpper.dataset.number) {
-            // edit mode
-            update_mini_node_logical_data_operator_structure(elseData, latestElementRightClick.id, latestElementRightClick.node, newNode)
-            return;
-        }
-        insert_logical_operator_data_structure(
-            elseData,
-            latestElementRightClick.id,
-            newNode,
-            mode
-        );
+        return;
     }
-}
-
-// TODO
-function persist_rules_state(mode = "if") {
-    // if (mode == "if") {
-    //   // START if
-    //   let newIfSentence = "";
-    //   let ifSentences = document.getElementById("if-sentences");
-    //   ifSentences.innerHTML = "";
-    //   for (let index = 0; index <= latestId; index++) {
-    //     if (
-    //       localStorage.getItem(index) &&
-    //       !document.getElementById(JSON.parse(localStorage.getItem(index)).id) &&
-    //       JSON.parse(localStorage.getItem(index)).mode == mode
-    //     ) {
-    //       create_new_sentence_and_append(ifSentences, index);
-    //     }
-    //   }
-    //   // TODO
-    //   // ifSummary.innerHTML += newIfSentence + " AND ";
-    //   // END if
-    // } else if (mode == "then") {
-    //   // START then
-    //   let thenSentences = document.getElementById("then-sentences");
-    //   thenSentences.innerHTML = "";
-    //   for (let index = 0; index <= latestId; index++) {
-    //     if (
-    //       localStorage.getItem(index) &&
-    //       !document.getElementById(JSON.parse(localStorage.getItem(index)).id) &&
-    //       JSON.parse(localStorage.getItem(index)).mode == mode
-    //     ) {
-    //       create_new_sentence_and_append(thenSentences, index);
-    //     }
-    //   }
-    //   // END then
-    // } else if (mode == "else") {
-    //   // START else
-    //   let elseSentences = document.getElementById("else-sentences");
-    //   elseSentences.innerHTML = "";
-    //   for (let index = 0; index <= latestId; index++) {
-    //     if (
-    //       localStorage.getItem(index) &&
-    //       !document.getElementById(JSON.parse(localStorage.getItem(index)).id) &&
-    //       JSON.parse(localStorage.getItem(index)).mode == mode
-    //     ) {
-    //       create_new_sentence_and_append(elseSentences, index);
-    //     }
-    //   }
-    //   // END else
-    // }
+    insert_logical_operator_data_structure(
+        allData[allDataIndex],
+        newNode,
+        allDataIndex,
+        latestElementRightClick.id
+    );
 }
 
 function create_new_sentence_and_append(parentNode, index) {
@@ -454,24 +361,12 @@ function create_new_sentence_and_append(parentNode, index) {
     parentNode.appendChild(newElem);
 }
 
-function load_upper_modal(latestElementRightClick, mode) {
+function load_upper_modal(latestElementRightClick) {
     let chosen;
-    if (mode == "if") {
-        chosen = select_in_logical_operator_data_structure(
-            ifData,
-            latestElementRightClick.id
-        );
-    } else if (mode == "then") {
-        chosen = select_in_logical_operator_data_structure(
-            thenData,
-            latestElementRightClick.id
-        );
-    } else if (mode == "else") {
-        chosen = select_in_logical_operator_data_structure(
-            elseData,
-            latestElementRightClick.id
-        );
-    }
+    chosen = select_in_logical_operator_data_structure(
+        allData[latestElementRightClick.allDataIndex],
+        latestElementRightClick.id
+    );
     data = chosen.nodes[latestElementRightClick.node];
     let attribute = document.getElementById("attribute");
     let operator = document.getElementById("operator");
@@ -501,27 +396,8 @@ function change_selected_option_by_text(selectNode, text) {
 
 /* START Context menu */
 let contextMenu = document.getElementById("context-menu");
-let ifSentencesContainer = document.getElementById("if-sentences-container");
 
-
-let thenSentencesContainer = document.getElementById(
-    "then-sentences-container"
-);
-let elseSentencesContainer = document.getElementById(
-    "else-sentences-container"
-);
-
-ifSentencesContainer.addEventListener("click", (e) => {
-    check_if_div_should_be_been_blue(e)
-});
-
-thenSentencesContainer.addEventListener("click", (e) => {
-    check_if_div_should_be_been_blue(e)
-});
-
-elseSentencesContainer.addEventListener("click", (e) => {
-    check_if_div_should_be_been_blue(e)
-});
+let dataContainer = document.querySelectorAll(".data-container");
 
 function check_if_div_should_be_been_blue(e) {
     if (e.target.id.includes("operator")) {
@@ -538,101 +414,121 @@ function check_if_div_should_be_been_blue(e) {
     }
 }
 
-ifSentencesContainer.addEventListener("change", (e) => {
-    let id;
-    if (e.target.id.includes("operator")) {
-        id = e.target.id.replace("operator-", "");
-        let chosen = select_in_logical_operator_data_structure(ifData, id);
-        if (e.target.value == "NOT") {
-            chosen.NOT = true;
-        } else {
-            chosen.operator = e.target.value;
+function change_all_data_index_to_mode(index) {
+    if (index <= 2) {
+        if (index == 0) {
+            return "if";
+        } else if (index == 1) {
+            return "then";
+        } else if (index == 2) {
+            return "else";
         }
-    } else if (e.target.id.includes("not")) {
-        id = e.target.id.replace("not-", "")
-        let chosen = select_in_logical_operator_data_structure(ifData, id);
-        if (e.target.value == "NOT") {
-            chosen.NOT = true;
+    } else {
+        if (index % 2 != 0) {
+            return "if";
         } else {
-            chosen.NOT = false;
+            return "then";
         }
     }
-    rebuild_page();
+}
+
+function find_all_data_index(node) {
+    if (node && node.dataset && node.dataset.index) {
+        return node.dataset.index;
+    } else {
+        return find_all_data_index(node.parentNode);
+    }
+}
+
+function add_data_container_events(node) {
+    let allDataIndex = find_all_data_index(node);
+    let mode = change_all_data_index_to_mode(allDataIndex);
+
+    node.addEventListener("click", (e) => {
+        check_if_div_should_be_been_blue(e);
+    });
+
+    node.addEventListener("contextmenu", function (e) {
+        let allDataIndex = find_all_data_index(node);
+        if (mode == "if") {
+            e.preventDefault();
+            e.stopPropagation();
+
+            if (!e.target.classList.contains("div-selected")) {
+                return;
+            }
+
+            targetId = e.target.parentNode.id;
+            if (targetId.includes("if-sentence-complete")) {
+                latestElementRightClick = {
+                    id: targetId.replace("if-sentence-complete-", ""),
+                    allDataIndex,
+                    node: null,
+                };
+            } else if (targetId.includes("if-sentence")) {
+                latestElementRightClick = {
+                    id: targetId.replace("if-sentence-", ""),
+                    allDataIndex,
+                    node: e.target.id,
+                };
+            }
+        } else {
+            e.preventDefault();
+            e.stopPropagation();
+            if (!e.target.classList.contains("div-selected")) {
+                return;
+            }
+            latestElementRightClick.id = e.target.id;
+            targetId = e.target.parentNode.id;
+
+            latestElementRightClick = {
+                id: targetId.replace("nonIf-sentence-", ""),
+                allDataIndex:
+                    e.target.parentNode.parentNode.parentNode.parentNode
+                        .parentNode.dataset.index,
+                node: e.target.id,
+            };
+        }
+        show_context_menu(e, contextMenu, mode);
+    });
+
+    node.addEventListener("change", function (e) {
+        if (mode == "if") {
+            let id;
+            if (e.target.id.includes("operator")) {
+                id = e.target.id.replace("operator-", "");
+                let chosen = select_in_logical_operator_data_structure(
+                    allData[allDataIndex],
+                    id
+                );
+                if (e.target.value == "NOT") {
+                    chosen.NOT = true;
+                } else {
+                    chosen.operator = e.target.value;
+                }
+            } else if (e.target.id.includes("not")) {
+                id = e.target.id.replace("not-", "");
+                let chosen = select_in_logical_operator_data_structure(
+                    allData[allDataIndex],
+                    id
+                );
+                if (e.target.value == "NOT") {
+                    chosen.NOT = true;
+                } else {
+                    chosen.NOT = false;
+                }
+            }
+            rebuild_page();
+        }
+    });
+}
+
+dataContainer.forEach(function (single) {
+    add_data_container_events(single);
 });
 
-// setInterval(function () {
-//     let allDivSelectedElem = document.getElementsByClassName("div-selected");
-//     let id;
-//     let node;
-//     for (let i = 0; i < allDivSelectedElem.length; i++) {
-//         if(allDivSelectedElem[i].parentElement.id.includes("if-sentence-complete")){
-//           id = allDivSelectedElem[i].parentElement.id.replace("if-sentence-complete-", "")
-//           node = null;
-//         }else if(allDivSelectedElem[i].parentElement.id.includes("if-sentence")){
-//           id = allDivSelectedElem[i].parentElement.id.replace("if-sentence-", "")
-//           node = allDivSelectedElem[i].innerHTML;
-//         }
-//       console.log(id,node);
-//     }
-// }, 1000);
-
-ifSentencesContainer.addEventListener("contextmenu", (e) => {
-    e.preventDefault();
-    e.stopPropagation();
-
-    if (!e.target.classList.contains("div-selected")) {
-        return;
-    }
-
-    targetId = e.target.parentNode.id;
-    if (targetId.includes("if-sentence-complete")) {
-        latestElementRightClick = {
-            id: targetId.replace("if-sentence-complete-", ""),
-            node: null,
-        };
-    } else if (targetId.includes("if-sentence")) {
-        latestElementRightClick = {
-            id: targetId.replace("if-sentence-", ""),
-            node: e.target.id,
-        };
-    }
-    show_context_menu(e, contextMenu, "if");
-});
 document.body.addEventListener("click", (e) => {
     hide_context_menu(e, contextMenu);
-});
-
-thenSentencesContainer.addEventListener("contextmenu", (e) => {
-    e.preventDefault();
-    e.stopPropagation();
-    if (!e.target.classList.contains("div-selected")) {
-        return;
-    }
-    latestElementRightClick.id = e.target.id;
-    targetId = e.target.parentNode.id;
-
-    latestElementRightClick = {
-        id: targetId.replace("nonIf-sentence-", ""),
-        node: e.target.id,
-    };
-
-    show_context_menu(e, contextMenu, "then");
-});
-elseSentencesContainer.addEventListener("contextmenu", (e) => {
-    e.preventDefault();
-    e.stopPropagation();
-    if (!e.target.classList.contains("div-selected")) {
-        return;
-    }
-    latestElementRightClick.id = e.target.id;
-    targetId = e.target.parentNode.id;
-
-    latestElementRightClick = {
-        id: targetId.replace("nonIf-sentence-", ""),
-        node: e.target.id,
-    };
-
-    show_context_menu(e, contextMenu, "else");
 });
 
 let addMenu = document.getElementById("add");
@@ -666,7 +562,9 @@ deleteMenu.addEventListener("click", function () {
                 ""
             );
             node = allDivSelectedElem[i].id;
-        } else if (allDivSelectedElem[i].parentElement.id.includes("nonIf-sentence")) {
+        } else if (
+            allDivSelectedElem[i].parentElement.id.includes("nonIf-sentence")
+        ) {
             nonIf = true;
             id = allDivSelectedElem[i].parentElement.id.replace(
                 "nonIf-sentence-",
@@ -675,23 +573,28 @@ deleteMenu.addEventListener("click", function () {
             node = allDivSelectedElem[i].id;
         }
         if (node) {
-            delete_mini_node_logical_operator_data_structure(elseData, id, node);
-            delete_mini_node_logical_operator_data_structure(thenData, id, node);
-            delete_mini_node_logical_operator_data_structure(ifData, id, node);
+            delete_mini_node_logical_operator_data_structure(
+                allData[latestElementRightClick.allDataIndex],
+                id,
+                node
+            );
         } else {
-            delete_logical_operator_data_structure(ifData, id);
+            delete_logical_operator_data_structure(
+                allData[latestElementRightClick.allDataIndex],
+                id
+            );
         }
     }
     rebuild_page();
 });
 
 addMenu.addEventListener("click", function () {
-    open_modal(upperModal, addMenu.dataset.mode);
+    open_modal(upperModal, false, latestElementRightClick, "add");
 });
 
 editMenu.addEventListener("click", function () {
-    open_modal(upperModal, editMenu.dataset.mode, latestElementRightClick);
-    load_upper_modal(latestElementRightClick, editMenu.dataset.mode);
+    open_modal(upperModal, false, latestElementRightClick, "edit");
+    load_upper_modal(latestElementRightClick);
 });
 
 groupMenu.addEventListener("click", function () {
@@ -702,22 +605,31 @@ groupMenu.addEventListener("click", function () {
     let id = allDivSelectedElem[0].parentNode.id.replace("if-sentence-", "");
     let nodeIndexArray = [];
     for (let i = 0; i < allDivSelectedElem.length; i++) {
-        nodeIndexArray.push(+(allDivSelectedElem[i].id));
+        nodeIndexArray.push(+allDivSelectedElem[i].id);
     }
-    group_logical_operator_data_structure(ifData, id, nodeIndexArray);
+    group_logical_operator_data_structure(
+        allData[latestElementRightClick.allDataIndex],
+        id,
+        nodeIndexArray
+    );
     rebuild_page();
-})
+});
 
 ungroupMenu.addEventListener("click", function () {
     if (!check_if_ungroup_menu_should_be_shown()) {
         return;
     }
     let allDivSelectedElem = document.getElementsByClassName("div-selected");
-    let id = allDivSelectedElem[0].parentNode.id.replace("if-sentence-complete-", "");
-    ungroup_logical_operator_data_structure(ifData, id);
+    let id = allDivSelectedElem[0].parentNode.id.replace(
+        "if-sentence-complete-",
+        ""
+    );
+    ungroup_logical_operator_data_structure(
+        allData[latestElementRightClick.allDataIndex],
+        id
+    );
     rebuild_page();
-})
-
+});
 
 function reset_upper_modal() {
     switch_to_attribute_mode();
@@ -754,7 +666,10 @@ function check_if_group_menu_should_be_shown() {
     let flag = true;
     let previous;
     for (let i = 0; i < allDivSelectedElem.length; i++) {
-        if (previous && allDivSelectedElem[i].parentNode.id != previous.parentNode.id) {
+        if (
+            previous &&
+            allDivSelectedElem[i].parentNode.id != previous.parentNode.id
+        ) {
             flag = false;
         }
         previous = allDivSelectedElem[i];
@@ -763,8 +678,14 @@ function check_if_group_menu_should_be_shown() {
         flag = false;
     }
     if (flag) {
-        let chosen = select_in_logical_operator_data_structure(ifData, allDivSelectedElem[0].parentNode.id.replace("if-sentence-", ""));
-        if (chosen.nodes && (chosen.nodes.length - allDivSelectedElem.length <= 1)) {
+        let chosen = select_in_logical_operator_data_structure(
+            allData[latestElementRightClick.allDataIndex],
+            allDivSelectedElem[0].parentNode.id.replace("if-sentence-", "")
+        );
+        if (
+            chosen.nodes &&
+            chosen.nodes.length - allDivSelectedElem.length <= 1
+        ) {
             flag = false;
         }
     }
@@ -783,10 +704,19 @@ function check_if_ungroup_menu_should_be_shown() {
     if (allDivSelectedElem.length > 1) {
         flag = false;
     }
-    if (!(allDivSelectedElem[0].parentNode.id.includes("if-sentence-complete-"))) {
+    if (
+        !allDivSelectedElem[0].parentNode.id.includes("if-sentence-complete-")
+    ) {
         flag = false;
     }
-    let parent = select_in_logical_operator_data_structure(ifData, allDivSelectedElem[0].parentNode.id.replace("if-sentence-complete-", ""), true);
+    let parent = select_in_logical_operator_data_structure(
+        allData[latestElementRightClick.allDataIndex],
+        allDivSelectedElem[0].parentNode.id.replace(
+            "if-sentence-complete-",
+            ""
+        ),
+        true
+    );
     if (!parent) {
         flag = false;
     }
@@ -855,21 +785,22 @@ function create_logical_operator_data_structure_sentence(data) {
     return result.join(" ");
 }
 
-function insert_logical_operator_data_structure(data, id, object, mode = "if") {
+function insert_logical_operator_data_structure(
+    data,
+    object,
+    allDataIndex = 0,
+    id = data.id
+) {
     if (data && !(Object.keys(data).length === 0)) {
-        if (mode == "if") {
+        if (id) {
             let chosen = select_in_logical_operator_data_structure(data, id);
             chosen.nodes.push(object);
         } else {
-            if (mode == "then") {
-                id = thenData.id;
-                let chosen = select_in_logical_operator_data_structure(data, id);
-                chosen.nodes.push(object);
-            } else if (mode == "else") {
-                id = elseData.id;
-                let chosen = select_in_logical_operator_data_structure(data, id);
-                chosen.nodes.push(object);
-            }
+            let chosen = select_in_logical_operator_data_structure(
+                data,
+                data.id
+            );
+            chosen.nodes.push(object);
         }
     } else {
         data = {
@@ -880,13 +811,7 @@ function insert_logical_operator_data_structure(data, id, object, mode = "if") {
             childs: [],
         };
         data.nodes.push(object);
-        if (mode == "if") {
-            ifData = data;
-        } else if (mode == "then") {
-            thenData = data;
-        } else if (mode == "else") {
-            elseData = data;
-        }
+        allData[allDataIndex] = data;
     }
 }
 
@@ -898,17 +823,25 @@ function update_logical_operator_data_structure(data, id, object) {
     result.childs = object.childs || result.childs;
 }
 
-function update_mini_node_logical_data_operator_structure(data, id, nodeIndex, object) {
+function update_mini_node_logical_data_operator_structure(
+    data,
+    id,
+    nodeIndex,
+    object
+) {
     let chosen = select_in_logical_operator_data_structure(data, id);
     chosen.nodes[nodeIndex].left = object.left || chosen.nodes[nodeIndex].left;
-    chosen.nodes[nodeIndex].operator = object.operator || chosen.nodes[nodeIndex].operator;
-    chosen.nodes[nodeIndex].operatorValue = object.operatorValue || chosen.nodes[nodeIndex].operatorValue;
-    chosen.nodes[nodeIndex].right = object.right || chosen.nodes[nodeIndex].right;
-    chosen.nodes[nodeIndex].sentence = object.sentence || chosen.nodes[nodeIndex].sentence;
+    chosen.nodes[nodeIndex].operator =
+        object.operator || chosen.nodes[nodeIndex].operator;
+    chosen.nodes[nodeIndex].operatorValue =
+        object.operatorValue || chosen.nodes[nodeIndex].operatorValue;
+    chosen.nodes[nodeIndex].right =
+        object.right || chosen.nodes[nodeIndex].right;
+    chosen.nodes[nodeIndex].sentence =
+        object.sentence || chosen.nodes[nodeIndex].sentence;
 }
 
 function delete_logical_operator_data_structure(data, id) {
-
     let parent = select_in_logical_operator_data_structure(data, id, true);
     if (parent) {
         let newChild = [];
@@ -921,7 +854,7 @@ function delete_logical_operator_data_structure(data, id) {
         parent.childs = newChild;
     } else {
         // node is root
-        ifData = null;
+        allData[latestElementRightClick.allDataIndex] = null;
     }
 }
 
@@ -938,31 +871,34 @@ function group_logical_operator_data_structure(data, id, nodeIndexArray) {
     let childsCount = chosen.childs.length;
     if (nodeIndexArray) {
         nodeIndexArray.forEach(function (nodeIndex) {
-            chosen.childs[childsCount - 1].nodes.push(chosen.nodes[nodeIndex])
-        })
+            chosen.childs[childsCount - 1].nodes.push(chosen.nodes[nodeIndex]);
+        });
         let newNodes = [];
         chosen.nodes.forEach(function (singleNode, index) {
             if (nodeIndexArray.includes(index)) {
                 return;
             }
             newNodes.push(singleNode);
-        })
+        });
         chosen.nodes = newNodes;
     }
 }
 
-
-function insert_child_in_logical_data_operator_structure(data, id, NOT = false, operator = "AND") {
+function insert_child_in_logical_data_operator_structure(
+    data,
+    id,
+    NOT = false,
+    operator = "AND"
+) {
     let chosen = select_in_logical_operator_data_structure(data, id);
     chosen.childs.push({
         id: unique_id_generator(),
         NOT,
         operator,
         nodes: [],
-        childs: []
+        childs: [],
     });
 }
-
 
 function ungroup_logical_operator_data_structure(data, id) {
     let parent = select_in_logical_operator_data_structure(data, id, true);
@@ -976,41 +912,71 @@ function ungroup_logical_operator_data_structure(data, id) {
     delete_logical_operator_data_structure(data, id);
 }
 
+setInterval(function () {
+    console.log(allData);
+}, 2000);
 
 function select_in_logical_operator_data_structure(
     data,
-    id,
+    id = data.id,
     parentMode = false
 ) {
-    let indexArray = index_array_node_in_logical_operator_data_structure(
-        data,
-        id
-    );
-
-    if (parentMode) {
-        indexArray.pop();
-    }
-    if (indexArray.length == 0) {
-        return false;
-    }
-    if (indexArray.length == 1) {
-        return data;
-    }
-    let result = data;
-    if (indexArray.length >= 2) {
-        //result = ifData;
-        indexArray.forEach(function (singleIndex, index) {
-            if (index === indexArray.length - 1) {
-                result = result[singleIndex];
-            } else if (index === 0) {
-                result = result.childs;
-            } else {
-                result = result[singleIndex];
-                result = result.childs;
+    let find = false;
+    let resultInAll;
+    if (data === allData) {
+        data.forEach(function (singleData) {
+            if (select(singleData, id, parentMode)) {
+                resultInAll = select(singleData, id, parentMode);
             }
         });
+        return resultInAll;
+    } else {
+        return select(data, id, parentMode);
     }
-    return result;
+
+    function select(data, id, parentMode) {
+        let indexArray = index_array_node_in_logical_operator_data_structure(
+            data,
+            id
+        );
+        if (indexArray) {
+            find = true;
+        } else {
+            find = false;
+        }
+
+        if (!find) {
+            return false;
+        }
+
+        if (parentMode) {
+            indexArray.pop();
+        }
+
+        if (indexArray.length == 0) {
+            return false;
+        }
+
+        if (indexArray.length == 1) {
+            return data;
+        }
+
+        let result = data;
+        if (indexArray.length >= 2) {
+            //result = allData[0];
+            indexArray.forEach(function (singleIndex, index) {
+                if (index === indexArray.length - 1) {
+                    result = result[singleIndex];
+                } else if (index === 0) {
+                    result = result.childs;
+                } else {
+                    result = result[singleIndex];
+                    result = result.childs;
+                }
+            });
+        }
+        return result;
+    }
 }
 
 function index_array_node_in_logical_operator_data_structure(data, id) {
@@ -1043,8 +1009,6 @@ function create_AND_OR_NOT_element() {
     document.body.appendChild(newElem);
 }
 
-function create_if_elements_by_data(data) { }
-
 function create_elements_of_one_node_of_logical_operator_data_structure(
     data,
     parendNode,
@@ -1063,7 +1027,6 @@ function create_elements_of_one_node_of_logical_operator_data_structure(
             "id",
             "if-sentence-complete-" + data.id
         );
-
 
         if (data.NOT) {
             let newElemSelect = document.createElement("div");
@@ -1100,8 +1063,6 @@ function create_elements_of_one_node_of_logical_operator_data_structure(
         newElemIfSentenceComplete.appendChild(newElemSelect);
         parendNode.appendChild(newElemIfSentenceComplete);
 
-
-
         //
         let selected = document.getElementById("operator-" + data.id);
         selected.value = data.operator;
@@ -1120,13 +1081,12 @@ function create_elements_of_one_node_of_logical_operator_data_structure(
             newElemIfSentenceComplete.appendChild(newElemIfSentenceChild);
         }
 
-
         //
         data.childs &&
             data.childs.forEach(function (singleChild) {
                 create_elements_of_one_node_of_logical_operator_data_structure(
                     singleChild,
-                    newElemIfSentenceChild,
+                    newElemIfSentenceChild
                 );
             });
 
@@ -1140,10 +1100,13 @@ function create_elements_of_one_node_of_logical_operator_data_structure(
                 );
             });
     } else {
-        parendNode.innerHTML = ""
+        parendNode.innerHTML = "";
         let newElemNonIfSentenceComplete = document.createElement("div");
 
-        newElemNonIfSentenceComplete.setAttribute("class", "nonIf-sentence-complete");
+        newElemNonIfSentenceComplete.setAttribute(
+            "class",
+            "nonIf-sentence-complete"
+        );
         newElemNonIfSentenceComplete.setAttribute(
             "id",
             "nonIf-sentence-complete-" + data.id
@@ -1152,9 +1115,10 @@ function create_elements_of_one_node_of_logical_operator_data_structure(
         //
         let newElemSentenceContainer = document.createElement("div");
         newElemSentenceContainer.setAttribute("class", "nonIf-sentences");
-        newElemSentenceContainer.setAttribute("id", "nonIf-sentence-" + data.id);
-
-
+        newElemSentenceContainer.setAttribute(
+            "id",
+            "nonIf-sentence-" + data.id
+        );
 
         //
         data.nodes &&
@@ -1168,10 +1132,7 @@ function create_elements_of_one_node_of_logical_operator_data_structure(
 
         newElemNonIfSentenceComplete.appendChild(newElemSentenceContainer);
         parendNode.appendChild(newElemNonIfSentenceComplete);
-
     }
-
-
 }
 
 function create_new_sentence(parentNode, sentence, id) {
@@ -1184,71 +1145,128 @@ function create_new_sentence(parentNode, sentence, id) {
 
 /* END elements factory */
 
+function count_of_extra_ifThens() {
+    if (allData.length < 3) {
+        return 0;
+    } else {
+        return (allData.length - 3) / 2;
+    }
+}
+
 function rebuild_page() {
     result = [];
-    ifSentencesContainer.innerHTML = "";
-    elseSentencesContainer.innerHTML = "";
-    thenSentencesContainer.innerHTML = "";
-    ifSummary.innerHTML = "";
-    create_elements_of_one_node_of_logical_operator_data_structure(
-        ifData,
-        ifSentencesContainer
-    );
-    create_elements_of_one_node_of_logical_operator_data_structure(
-        thenData,
-        thenSentencesContainer,
-        "then"
-    );
-    create_elements_of_one_node_of_logical_operator_data_structure(
-        elseData,
-        elseSentencesContainer,
-        "else"
-    );
-
-    ifSummary.innerHTML = create_logical_operator_data_structure_sentence(
-        ifData
-    );
-    lowerModalData = {
-        if: ifData,
-        then: thenData,
-        else: elseData
+    let dataContainer = document.querySelectorAll(".if-then");
+    dataContainer.forEach(function (single, index) {
+        if (index == 0) {
+            return;
+        }
+        single.remove();
+    });
+    for (let index = 0; index < count_of_extra_ifThens(); index++) {
+        add_new_if_then();
     }
+
+    dataContainer = document.querySelectorAll(".data-container");
+    dataContainer.forEach(function (single) {
+        let allDataIndex = single.parentNode.parentNode.dataset.index;
+        let mode = change_all_data_index_to_mode(allDataIndex);
+        single.innerHTML = "";
+        create_elements_of_one_node_of_logical_operator_data_structure(
+            allData[allDataIndex],
+            single,
+            mode
+        );
+    });
+
+    let ifArray = [0];
+    allData.forEach(function (single, index) {
+        if (index >= 3) {
+            if ((index - 3) % 2 == 0) {
+                ifArray.push(index);
+            }
+        }
+    });
+
+    let ifSummaries = document.querySelectorAll(".if-summary");
+
+    ifSummaries.forEach(function (single, index) {
+        single.innerHTML = "";
+        result = [];
+        single.innerHTML = create_logical_operator_data_structure_sentence(
+            allData[ifArray[index]]
+        );
+    });
+
+    lowerModalData = {
+        allData,
+    };
     localStorage.setItem("data", JSON.stringify(lowerModalData));
     check_if_lower_modal_save_button_should_be_actived();
-    // console.log(elseData);
-    // console.log(thenData);
-    // console.log(ifData);
-
-
 }
 
 rebuild_page();
 
-
-
 /* START add if then block to page */
-let addIfThenButton = document.getElementById("add-if-then");
-let ifThen = document.getElementById("if-then");
+let upperModalOpeners = document.querySelectorAll(".open-upper");
 
+let addIfThenButton = document.getElementById("add-if-then");
 
 // TODO
-addIfThenButton.addEventListener("click",function(){
-    let newIfThen = ifThen.cloneNode(true);
-    ifThen.parentNode.insertBefore(newIfThen,ifThen.nextSibling);
+addIfThenButton.addEventListener("click", function () {
+    allData.push({}, {});
+    rebuild_page();
+});
+
+function add_new_if_then() {
+    let ifThens = document.querySelectorAll(".if-then");
+    let newIfThen = ifThens[0].cloneNode(true);
+    newIfThen.children[0].children[0].innerHTML = "else if";
+    newIfThen.querySelector(".close-if-then").style.display = "block";
+    ifThens[ifThens.length - 1].parentNode.insertBefore(
+        newIfThen,
+        ifThens[ifThens.length - 1].nextSibling
+    );
     let ifThenClosers = newIfThen.querySelectorAll(".close-if-then");
-    add_close_event_listener(ifThenClosers[0]);
-})
+    add_close_events(ifThenClosers[0]);
 
+    let currentCount = document.querySelectorAll(".block-container").length;
+    newIfThen.children[0].dataset.index = currentCount - 2;
+    newIfThen.children[1].dataset.index = currentCount - 1;
 
+    let upperModalOpeners = newIfThen.querySelectorAll(".open-upper");
+    add_open_upper_events(upperModalOpeners[0]);
+    add_open_upper_events(upperModalOpeners[1]);
+
+    let dataContainer = newIfThen.querySelectorAll(".data-container");
+    add_data_container_events(dataContainer[0]);
+    add_data_container_events(dataContainer[1]);
+}
 
 let ifThenClosers = document.querySelectorAll(".close-if-then");
 ifThenClosers.forEach(function (single) {
-    add_close_event_listener(single)
+    add_close_events(single);
 });
 
-function add_close_event_listener(node) {
+function add_close_events(node) {
     node.addEventListener("click", function () {
-        // TODO
+        let allDataIndex = node.parentNode.children[0].dataset.index;
+        allData.splice(allDataIndex, 2);
+        rebuild_page();
     });
 }
+
+upperModalOpeners.forEach(function (single) {
+    add_open_upper_events(single);
+});
+
+function add_open_upper_events(node) {
+    node.addEventListener("click", () =>
+        open_modal(upperModal, find_add_data_index(node))
+    );
+}
+
+function find_add_data_index(node) {
+    return node.parentNode.parentNode.dataset.index;
+}
+
 /* END add if then block to page */

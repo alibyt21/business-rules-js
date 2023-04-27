@@ -33,7 +33,7 @@
             background-color: #efefef;
         }
 
-        #if-summary {
+        .if-summary {
             padding: 5px 0;
             padding-left: 2rem;
         }
@@ -148,13 +148,11 @@
                         </div>
                     </div>
 
-                    <div id="if-then"
-                        class="relative border broder-solid border-gray-300 px-5 rounded-xl z-[99] bg-white my-3">
+                    <div class="if-then relative border broder-solid border-gray-300 px-5 rounded-xl z-[99] bg-white my-3">
                         <!-- start if container -->
-                        <div id="if-container" class="w-full my-4">
+                        <div class="if-container block-container w-full my-4" data-index="0">
                             <div class="w-full">If</div>
-                            <div id="if-summary">
-                            </div>
+                            <div class="if-summary"></div>
 
                             <div class="w-full pr-8 pt-2">
                                 <div class="w-full ml-8 border border-solid border-[#cccccc]"></div>
@@ -162,12 +160,11 @@
 
                             <!-- start if sentences -->
                             <div class="pl-8 max-h-[350px] overflow-auto">
-                                <div class="condition-block" id="if-sentences-container"></div>
+                                <div class="data-container" id="if-sentences-container"></div>
                             </div>
                             <!-- end if sentences -->
 
-                            <div id="if-opener"
-                                class="open-upper w-full pl-8 py-2 text-sm text-[#428bca] hover:underline">
+                            <div class="w-full pl-8 py-2 text-sm text-[#428bca] hover:underline">
                                 <button class="open-upper cursor-pointer">
                                     Add
                                 </button>
@@ -176,7 +173,7 @@
                         <!-- end if container -->
 
                         <!-- start then container -->
-                        <div id="thenContainer" class="my-4">
+                        <div class="then-container block-container my-4" data-index="1">
                             <div class="w-full">Then</div>
 
                             <div class="w-full pr-8 pt-2">
@@ -185,11 +182,11 @@
 
                             <!-- start then sentences -->
                             <div class="pl-8 max-h-[200px] overflow-auto">
-                                <div class="condition-block" id="then-sentences-container"></div>
+                                <div class="data-container" id="then-sentences-container"></div>
                             </div>
                             <!-- end then sentences -->
 
-                            <div id="then-opener" class="w-full ml-8 py-2 text-sm text-[#428bca] hover:underline">
+                            <div class="w-full ml-8 py-2 text-sm text-[#428bca] hover:underline">
                                 <button class="open-upper cursor-pointer">
                                     Add
                                 </button>
@@ -198,7 +195,7 @@
                         <!-- end then container -->
 
                         <!-- start close if then block -->
-                        <div class="close-if-then absolute top-4 right-4 cursor-pointer select-none">
+                        <div class="close-if-then absolute top-4 right-4 cursor-pointer select-none" style="display: none;">
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
                                 stroke="currentColor" class="w-5 h-5">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
@@ -217,7 +214,7 @@
 
                     <div class="border broder-solid border-gray-300 my-3 px-5 rounded-xl ">
                         <!-- start else container -->
-                        <div id="elseContainer" class="my-4">
+                        <div class="else-container block-container my-4" data-index="2">
                             <div class="w-full">Else</div>
 
                             <div class="w-full pr-8 pt-2">
@@ -226,11 +223,11 @@
 
                             <!-- start else sentences -->
                             <div class="pl-8 max-h-[200px] overflow-auto">
-                                <div class="condition-block" id="else-sentences-container"></div>
+                                <div class="data-container" id="else-sentences-container"></div>
                             </div>
                             <!-- end else sentences -->
 
-                            <div id="else-opener" class="w-full py-2 ml-8 text-sm text-[#428bca] hover:underline">
+                            <div class="w-full py-2 ml-8 text-sm text-[#428bca] hover:underline">
                                 <button class="open-upper cursor-pointer">
                                     Add
                                 </button>
