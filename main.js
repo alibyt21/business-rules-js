@@ -11,6 +11,9 @@ if (localStorage.getItem("data")) {
 
 /* START helper functions */
 let latestId = -1;
+if(localStorage.getItem("latestId")){
+    latestId = +(localStorage.getItem("latestId"));
+}
 let unique_id_generator = (function (s) {
     return function () {
         s += 1;
@@ -19,7 +22,6 @@ let unique_id_generator = (function (s) {
         return s;
     };
 })(latestId);
-latestId = localStorage.getItem("latestId");
 /* END helper functions */
 
 // for opening upper modal just add class open-upper to element and so on...
@@ -147,6 +149,7 @@ function check_if_name_alert_should_be_shown() {
 }
 
 cancelLower.addEventListener("click", function () {
+    localStorage.removeItem("latestId");
     localStorage.removeItem("data");
     allData = [{}, {}, {}];
     rebuild_page();
