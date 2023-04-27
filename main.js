@@ -2,13 +2,18 @@ let latestElementRightClick = {
     id: null,
     node: null
 };
-let logical_operator_data_structure = {};
+let allData = [
+    {},
+    {},
+    {},
+]
+let ifData = {};
 let thenData = {}
 let elseData = {}
 let lowerModalData
 if (localStorage.getItem("data")) {
     lowerModalData = JSON.parse(localStorage.getItem("data"));
-    logical_operator_data_structure = lowerModalData.if;
+    ifData = lowerModalData.if;
     thenData = lowerModalData.then;
     elseData = lowerModalData.else;
 }
@@ -152,7 +157,7 @@ function check_if_name_alert_should_be_shown() {
 
 cancelLower.addEventListener("click", function () {
     localStorage.removeItem("data");
-    logical_operator_data_structure = {};
+    ifData = {};
     elseData = {};
     thenData = {};
     rebuild_page();
@@ -181,7 +186,7 @@ lowerModalClosers.forEach(function (single) {
 });
 
 ifOpener.addEventListener("click", function () {
-    latestElementRightClick.id = logical_operator_data_structure.id;
+    latestElementRightClick.id = ifData.id;
     latestElementRightClick.node = null;
 })
 
@@ -356,11 +361,11 @@ function save_upper_modal(mode = "if", latestElementRightClick = false) {
 
         if (saveUpper.dataset.number) {
             // edit mode
-            update_mini_node_logical_data_operator_structure(logical_operator_data_structure, latestElementRightClick.id, latestElementRightClick.node, newNode)
+            update_mini_node_logical_data_operator_structure(ifData, latestElementRightClick.id, latestElementRightClick.node, newNode)
             return;
         }
         insert_logical_operator_data_structure(
-            logical_operator_data_structure,
+            ifData,
             latestElementRightClick.id,
             newNode,
         );
@@ -453,7 +458,7 @@ function load_upper_modal(latestElementRightClick, mode) {
     let chosen;
     if (mode == "if") {
         chosen = select_in_logical_operator_data_structure(
-            logical_operator_data_structure,
+            ifData,
             latestElementRightClick.id
         );
     } else if (mode == "then") {
@@ -537,7 +542,7 @@ ifSentencesContainer.addEventListener("change", (e) => {
     let id;
     if (e.target.id.includes("operator")) {
         id = e.target.id.replace("operator-", "");
-        let chosen = select_in_logical_operator_data_structure(logical_operator_data_structure, id);
+        let chosen = select_in_logical_operator_data_structure(ifData, id);
         if (e.target.value == "NOT") {
             chosen.NOT = true;
         } else {
@@ -545,7 +550,7 @@ ifSentencesContainer.addEventListener("change", (e) => {
         }
     } else if (e.target.id.includes("not")) {
         id = e.target.id.replace("not-", "")
-        let chosen = select_in_logical_operator_data_structure(logical_operator_data_structure, id);
+        let chosen = select_in_logical_operator_data_structure(ifData, id);
         if (e.target.value == "NOT") {
             chosen.NOT = true;
         } else {
@@ -672,9 +677,9 @@ deleteMenu.addEventListener("click", function () {
         if (node) {
             delete_mini_node_logical_operator_data_structure(elseData, id, node);
             delete_mini_node_logical_operator_data_structure(thenData, id, node);
-            delete_mini_node_logical_operator_data_structure(logical_operator_data_structure, id, node);
+            delete_mini_node_logical_operator_data_structure(ifData, id, node);
         } else {
-            delete_logical_operator_data_structure(logical_operator_data_structure, id);
+            delete_logical_operator_data_structure(ifData, id);
         }
     }
     rebuild_page();
@@ -699,7 +704,7 @@ groupMenu.addEventListener("click", function () {
     for (let i = 0; i < allDivSelectedElem.length; i++) {
         nodeIndexArray.push(+(allDivSelectedElem[i].id));
     }
-    group_logical_operator_data_structure(logical_operator_data_structure, id, nodeIndexArray);
+    group_logical_operator_data_structure(ifData, id, nodeIndexArray);
     rebuild_page();
 })
 
@@ -709,7 +714,7 @@ ungroupMenu.addEventListener("click", function () {
     }
     let allDivSelectedElem = document.getElementsByClassName("div-selected");
     let id = allDivSelectedElem[0].parentNode.id.replace("if-sentence-complete-", "");
-    ungroup_logical_operator_data_structure(logical_operator_data_structure, id);
+    ungroup_logical_operator_data_structure(ifData, id);
     rebuild_page();
 })
 
@@ -758,7 +763,7 @@ function check_if_group_menu_should_be_shown() {
         flag = false;
     }
     if (flag) {
-        let chosen = select_in_logical_operator_data_structure(logical_operator_data_structure, allDivSelectedElem[0].parentNode.id.replace("if-sentence-", ""));
+        let chosen = select_in_logical_operator_data_structure(ifData, allDivSelectedElem[0].parentNode.id.replace("if-sentence-", ""));
         if (chosen.nodes && (chosen.nodes.length - allDivSelectedElem.length <= 1)) {
             flag = false;
         }
@@ -781,7 +786,7 @@ function check_if_ungroup_menu_should_be_shown() {
     if (!(allDivSelectedElem[0].parentNode.id.includes("if-sentence-complete-"))) {
         flag = false;
     }
-    let parent = select_in_logical_operator_data_structure(logical_operator_data_structure, allDivSelectedElem[0].parentNode.id.replace("if-sentence-complete-", ""), true);
+    let parent = select_in_logical_operator_data_structure(ifData, allDivSelectedElem[0].parentNode.id.replace("if-sentence-complete-", ""), true);
     if (!parent) {
         flag = false;
     }
@@ -876,7 +881,7 @@ function insert_logical_operator_data_structure(data, id, object, mode = "if") {
         };
         data.nodes.push(object);
         if (mode == "if") {
-            logical_operator_data_structure = data;
+            ifData = data;
         } else if (mode == "then") {
             thenData = data;
         } else if (mode == "else") {
@@ -916,7 +921,7 @@ function delete_logical_operator_data_structure(data, id) {
         parent.childs = newChild;
     } else {
         // node is root
-        logical_operator_data_structure = null;
+        ifData = null;
     }
 }
 
@@ -993,7 +998,7 @@ function select_in_logical_operator_data_structure(
     }
     let result = data;
     if (indexArray.length >= 2) {
-        //result = logical_operator_data_structure;
+        //result = ifData;
         indexArray.forEach(function (singleIndex, index) {
             if (index === indexArray.length - 1) {
                 result = result[singleIndex];
@@ -1186,7 +1191,7 @@ function rebuild_page() {
     thenSentencesContainer.innerHTML = "";
     ifSummary.innerHTML = "";
     create_elements_of_one_node_of_logical_operator_data_structure(
-        logical_operator_data_structure,
+        ifData,
         ifSentencesContainer
     );
     create_elements_of_one_node_of_logical_operator_data_structure(
@@ -1201,10 +1206,10 @@ function rebuild_page() {
     );
 
     ifSummary.innerHTML = create_logical_operator_data_structure_sentence(
-        logical_operator_data_structure
+        ifData
     );
     lowerModalData = {
-        if: logical_operator_data_structure,
+        if: ifData,
         then: thenData,
         else: elseData
     }
@@ -1212,7 +1217,7 @@ function rebuild_page() {
     check_if_lower_modal_save_button_should_be_actived();
     // console.log(elseData);
     // console.log(thenData);
-    // console.log(logical_operator_data_structure);
+    // console.log(ifData);
 
 
 }
@@ -1226,19 +1231,24 @@ let addIfThenButton = document.getElementById("add-if-then");
 let ifThen = document.getElementById("if-then");
 
 
-
+// TODO
 addIfThenButton.addEventListener("click",function(){
     let newIfThen = ifThen.cloneNode(true);
-    console.log(newIfThen);
     ifThen.parentNode.insertBefore(newIfThen,ifThen.nextSibling);
+    let ifThenClosers = newIfThen.querySelectorAll(".close-if-then");
+    add_close_event_listener(ifThenClosers[0]);
 })
 
 
 
 let ifThenClosers = document.querySelectorAll(".close-if-then");
 ifThenClosers.forEach(function (single) {
-    single.addEventListener("click", function () {
-        console.log(single.parentNode);
-    });
+    add_close_event_listener(single)
 });
+
+function add_close_event_listener(node) {
+    node.addEventListener("click", function () {
+        // TODO
+    });
+}
 /* END add if then block to page */
