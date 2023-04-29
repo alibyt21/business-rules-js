@@ -1264,7 +1264,10 @@ upperModalOpeners.forEach(function (single) {
 
 function add_open_upper_events(node) {
     node.addEventListener("click", () =>
+    {
+        latestElementRightClick.id = null;
         open_modal(upperModal, find_add_data_index(node))
+    }
     );
 }
 
