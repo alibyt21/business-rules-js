@@ -5,7 +5,8 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="main.css">
+    <!-- <link rel="stylesheet" href="main.css"> -->
+    <script src="https://cdn.tailwindcss.com"></script>
 
     <title>Document</title>
     <style>
@@ -274,7 +275,7 @@
                 <!-- start modal body -->
                 <div class="w-full p-7">
                     <!-- start inputs -->
-                    <div class="w-full">
+                    <div class="w-full" id="attribute-div">
                         <label class="w-full">Attribute</label>
                         <div class="w-full">
                             <select id="attribute" class="w-full p-2 bg-white border border-[#cccccc] rounded">
@@ -286,7 +287,7 @@
                         </div>
                     </div>
 
-                    <div class="w-full my-4">
+                    <div class="w-full my-4" id="operator-div">
                         <label class="w-full " id="operator-label">Operator</label>
                         <div class="w-full">
                             <select id="operator" class="w-full p-2 bg-white border border-[#cccccc] rounded">
@@ -318,7 +319,7 @@
                         </div>
                     </div>
 
-                    <div class="w-full my-4" div="operator-value-div">
+                    <div class="w-full my-4" id="operator-value-div">
                         <label class="w-full" id="operator-value-label">Is equal to</label>
                         <div class="w-full">
                             <select id="operator-value" class="w-full p-2 bg-white border border-[#cccccc] rounded">
@@ -343,7 +344,7 @@
                         </div>
                     </div>
 
-                    <div class="w-full -mt-3 hidden">
+                    <div class="w-full my-7" id="table-div">
                         <div class="w-full">
                             <table class="border border-solid border-gray-100">
                                 <thead class="border-t border-b border-solid border-gray-400">
@@ -363,12 +364,12 @@
                                     </tr>
                                 </thead>
                                 <tbody class="border-t border-b border-solid border-gray-400">
-                                    <tr class="py-2 w-full flex">
+                                    <tr class="py-2 w-full flex table-mode-row">
                                         <td class="w-full flex-1 mx-2">
                                             <select
                                                 class="w-full border border-solid border-gray-400 p-2 rounded bg-white">
-                                                <option value="0">Attribute</option>
-                                                <option value="1">Text</option>
+                                                <option value="Attribute">Attribute</option>
+                                                <option value="Text">Text</option>
                                             </select>
                                         </td>
                                         <td class="w-full flex-1 mx-2">
@@ -379,6 +380,7 @@
                                                     <option value="">Code</option>
                                                 </optgroup>
                                             </select>
+
                                         </td>
                                         <td class="w-full flex-1 mx-2">
                                             <input
@@ -393,6 +395,10 @@
                                     </tr>
                                 </tbody>
                             </table>
+                        </div>
+                        <div class="flex flex-row space-x-2 my-2">
+                            <button class="text-blue-600 cursor-pointer add-new-row select-none">Add</button>
+                            <button class="text-blue-600 cursor-pointer delete-new-row select-none">Delete</button>
                         </div>
                     </div>
                 </div>

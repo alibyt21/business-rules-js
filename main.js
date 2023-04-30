@@ -11,7 +11,7 @@ if (localStorage.getItem("data")) {
 
 /* START helper functions */
 let latestId = -1;
-if(localStorage.getItem("latestId")){
+if (localStorage.getItem("latestId")) {
     latestId = +(localStorage.getItem("latestId"));
 }
 let unique_id_generator = (function (s) {
@@ -99,7 +99,7 @@ let thenOperatorInnerHTML = `<optgroup label="Default value">
 </optgroup>`;
 
 init_lower_modal();
-close_modal(upperModal);
+// close_modal(upperModal);
 // close_modal(lowerModal);
 
 function init_lower_modal() {
@@ -194,6 +194,7 @@ function open_modal(
     mode = "add"
 ) {
     reset_upper_modal();
+
     let saveUpper = document.getElementById("save-upper");
     node.style.opacity = 100;
     node.style.visibility = "visible";
@@ -211,6 +212,17 @@ function open_modal(
     ) {
         saveUpper.dataset.index =
             allDataIndex || latestElementRightClick.allDataIndex;
+    }
+
+
+    let conditionMode = change_all_data_index_to_mode(allDataIndex);
+    console.log(conditionMode);
+    if(conditionMode == "if"){
+        operator.innerHTML = defaultOperatorInnerHTML;
+    }else if(conditionMode == "else"){
+        operator.innerHTML = elseOperatorInnerHTML;
+    }else if(conditionMode == "then"){
+        operator.innerHTML = thenOperatorInnerHTML;
     }
 }
 
@@ -248,6 +260,22 @@ operatorValue.addEventListener("change", function () {
     }
 });
 
+
+operator.addEventListener("change", function () {
+    console.log(operator.value);
+    switch (operator.value) {
+        case "defaults to a concatenated value":
+            switch_to_table_mode();
+            break;
+        case "equals a concatenated value":
+            switch_to_table_mode();
+            break;
+        default:
+            switch_to_default_form();
+            break;
+    }
+})
+
 function switch_to_blank_mode() {
     let secondAttributeDiv = document.getElementById("second-attribute-div");
     secondAttributeDiv.style.display = "none";
@@ -270,6 +298,7 @@ function switch_to_attribute_mode() {
 }
 
 function switch_to_attribute_value_mode() {
+    switch_to_base_form();
     let secondAttributeDiv = document.getElementById("second-attribute-div");
     let secondAttribute = document.getElementById("second-attribute");
     secondAttributeDiv.style.display = "block";
@@ -285,7 +314,94 @@ function switch_to_attribute_value_mode() {
     check_if_second_attribute_alert_should_be_shown();
 }
 
-function switch_to_table_mode() {}
+
+
+
+/* START table mode */
+
+let addRow = document.querySelector(".add-new-row");
+let deleteRow = document.querySelector(".delete-new-row");
+let tableRow = document.querySelector(".table-mode-row");
+let clonedSecondTdInTableMode = tableRow.children[1].children[0].cloneNode(true);
+
+function add_table_row_events(tableRowNode) {
+
+    tableRowNode.addEventListener("change", function (e) {
+        if (e.target != tableRowNode.children[0].children[0]) {
+            return;
+        }
+        if (tableRowNode.children[0].children[0].value == "Text") {
+            tableRowNode.children[1].innerHTML = `<input
+            class="w-full border border-solid border-gray-400 px-2 py-[6px] rounded bg-white"
+            type="text">`;
+            tableRowNode.children[2].children[0].setAttribute("disabled", "disabled");
+            tableRowNode.children[3].children[0].setAttribute("disabled", "disabled");
+
+        } else if (tableRowNode.children[0].children[0].value == "Attribute") {
+            tableRowNode.children[1].innerHTML = `<select
+            class="w-full border border-solid border-gray-400 p-2 rounded bg-white">
+            <optgroup label="Attributes">
+                <option value="">Name</option>
+                <option value="">Code</option>
+            </optgroup>
+        </select>`;
+            tableRowNode.children[2].children[0].removeAttribute("disabled");
+            tableRowNode.children[3].children[0].removeAttribute("disabled");
+        }
+    })
+}
+
+add_table_row_events(tableRow);
+
+let tableDiv = document.getElementById("table-div");
+let clonedTableDiv = tableDiv.cloneNode(true);
+function switch_to_table_mode() {
+
+    switch_to_base_form();
+    let operatorDiv = document.getElementById("operator-div");
+    operatorDiv.parentNode.insertBefore(clonedTableDiv,operatorDiv.nextSibling)
+
+}
+
+let clonedDefaultFromOfTableRow = tableRow.cloneNode(true);
+addRow.addEventListener("click", function () {
+    let newRow = clonedDefaultFromOfTableRow.cloneNode(true);
+    tableRow.parentNode.appendChild(newRow);
+    add_table_row_events(newRow);
+})
+
+deleteRow.addEventListener("click", function () {
+    if (tableRow.parentNode.children.length <= 1) {
+        return;
+    }
+    tableRow.parentNode.children[(tableRow.parentNode.children.length - 1)].remove();
+})
+
+/* END table mode */
+
+
+
+
+let operatorValueDiv = document.getElementById("operator-value-div");
+let secondAttributeDiv = document.getElementById("second-attribute-div");
+let clonedOperatorValueDiv = operatorValueDiv.cloneNode(true);
+let clonedSecondAttributeDiv = secondAttributeDiv.cloneNode(true);
+function switch_to_base_form() {
+    let operatorValueDiv = document.getElementById("operator-value-div");
+    let secondAttributeDiv = document.getElementById("second-attribute-div");
+    let tableDiv = document.getElementById("table-div");
+    tableDiv && tableDiv.remove();
+    operatorValueDiv && operatorValueDiv.remove();
+    secondAttributeDiv && secondAttributeDiv.remove();
+}
+
+function switch_to_default_form(){
+    switch_to_base_form();
+    let operatorDiv = document.getElementById("operator-div");
+    operatorDiv.parentNode.insertBefore(clonedOperatorValueDiv,operatorDiv.nextSibling)
+    operatorDiv.parentNode.insertBefore(clonedSecondAttributeDiv,operatorDiv.nextSibling.nextSibling)
+}
+
 
 function check_if_second_attribute_alert_should_be_shown() {
     let valueIsRequired = document.getElementById("value-is-required");
@@ -364,12 +480,14 @@ function create_new_sentence_and_append(parentNode, index) {
     parentNode.appendChild(newElem);
 }
 
+let defaultOperatorInnerHTML = operator.innerHTML;
 function load_upper_modal(latestElementRightClick) {
     let chosen;
     chosen = select_in_logical_operator_data_structure(
         allData[latestElementRightClick.allDataIndex],
         latestElementRightClick.id
     );
+    
     data = chosen.nodes[latestElementRightClick.node];
     let attribute = document.getElementById("attribute");
     let operator = document.getElementById("operator");
@@ -1223,7 +1341,7 @@ addIfThenButton.addEventListener("click", function () {
 function add_new_if_then() {
     let ifThens = document.querySelectorAll(".if-then");
     let newIfThen = ifThens[0].cloneNode(true);
-    newIfThen.children[0].children[0].innerHTML = "else if";
+    newIfThen.children[0].children[0].innerHTML = "Else if";
     newIfThen.querySelector(".close-if-then").style.display = "block";
     ifThens[ifThens.length - 1].parentNode.insertBefore(
         newIfThen,
@@ -1263,8 +1381,7 @@ upperModalOpeners.forEach(function (single) {
 });
 
 function add_open_upper_events(node) {
-    node.addEventListener("click", () =>
-    {
+    node.addEventListener("click", () => {
         latestElementRightClick.id = null;
         open_modal(upperModal, find_add_data_index(node))
     }
@@ -1274,5 +1391,7 @@ function add_open_upper_events(node) {
 function find_add_data_index(node) {
     return node.parentNode.parentNode.dataset.index;
 }
+
+switch_to_default_form();
 
 /* END add if then block to page */
