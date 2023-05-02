@@ -217,11 +217,11 @@ function open_modal(
 
     let conditionMode = change_all_data_index_to_mode(allDataIndex);
     console.log(conditionMode);
-    if(conditionMode == "if"){
+    if (conditionMode == "if") {
         operator.innerHTML = defaultOperatorInnerHTML;
-    }else if(conditionMode == "else"){
+    } else if (conditionMode == "else") {
         operator.innerHTML = elseOperatorInnerHTML;
-    }else if(conditionMode == "then"){
+    } else if (conditionMode == "then") {
         operator.innerHTML = thenOperatorInnerHTML;
     }
 }
@@ -249,26 +249,34 @@ operator.addEventListener("change", function () {
 // START change second attribute when operator value change
 let secondAttribute = document.getElementById("second-attribute");
 let secondAttributeOrginalInnerHTML = secondAttribute.innerHTML;
-operatorValue.addEventListener("change", function () {
-    if (operatorValue.value == "Blank") {
-        switch_to_blank_mode();
-    } else if (operatorValue.value == "Attribute") {
-        switch_to_attribute_mode();
-    } else if (operatorValue.value == "Attribute value") {
-        switch_to_attribute_value_mode();
-        check_if_upper_modal_save_button_should_be_actived();
-    }
-});
+
+function add_operator_value_events(operatorValueNode) {
+    operatorValueNode.addEventListener("change", function () {
+        if (operatorValueNode.value == "Blank") {
+            switch_to_blank_mode();
+        } else if (operatorValueNode.value == "Attribute") {
+            switch_to_attribute_mode();
+        } else if (operatorValueNode.value == "Attribute value") {
+            switch_to_attribute_value_mode();
+            check_if_upper_modal_save_button_should_be_actived();
+        }
+    });
+
+}
 
 
 operator.addEventListener("change", function () {
     console.log(operator.value);
     switch (operator.value) {
         case "defaults to a concatenated value":
-            switch_to_table_mode();
-            break;
         case "equals a concatenated value":
             switch_to_table_mode();
+            break;
+        case "has changed":
+        case "has not changed":
+        case "is required":
+        case "is not valid":
+            switch_to_base_form();
             break;
         default:
             switch_to_default_form();
@@ -298,7 +306,6 @@ function switch_to_attribute_mode() {
 }
 
 function switch_to_attribute_value_mode() {
-    switch_to_base_form();
     let secondAttributeDiv = document.getElementById("second-attribute-div");
     let secondAttribute = document.getElementById("second-attribute");
     secondAttributeDiv.style.display = "block";
@@ -359,24 +366,32 @@ function switch_to_table_mode() {
 
     switch_to_base_form();
     let operatorDiv = document.getElementById("operator-div");
-    operatorDiv.parentNode.insertBefore(clonedTableDiv,operatorDiv.nextSibling)
+    operatorDiv.parentNode.insertBefore(clonedTableDiv, operatorDiv.nextSibling)
+    let addRow = clonedTableDiv.querySelector(".add-new-row");
+    let deleteRow = clonedTableDiv.querySelector(".delete-new-row");
+    add_addrow_and_deleterow_events(addRow, deleteRow);
 
 }
 
-let clonedDefaultFromOfTableRow = tableRow.cloneNode(true);
-addRow.addEventListener("click", function () {
-    let newRow = clonedDefaultFromOfTableRow.cloneNode(true);
-    tableRow.parentNode.appendChild(newRow);
-    add_table_row_events(newRow);
-})
+let clonedDefaultFormOfTableRow = tableRow.cloneNode(true);
 
-deleteRow.addEventListener("click", function () {
-    if (tableRow.parentNode.children.length <= 1) {
-        return;
-    }
-    tableRow.parentNode.children[(tableRow.parentNode.children.length - 1)].remove();
-})
 
+function add_addrow_and_deleterow_events(addRowNode, deleteRowNode) {
+    addRowNode.addEventListener("click", function () {
+        let newRow = clonedDefaultFormOfTableRow.cloneNode(true);
+        let tableRow = document.querySelector(".table-mode-row");
+        tableRow.parentNode.appendChild(newRow);
+        add_table_row_events(newRow);
+    })
+
+    deleteRowNode.addEventListener("click", function () {
+        let tableRow = document.querySelector(".table-mode-row");
+        if (tableRow.parentNode.children.length <= 1) {
+            return;
+        }
+        tableRow.parentNode.children[(tableRow.parentNode.children.length - 1)].remove();
+    })
+}
 /* END table mode */
 
 
@@ -395,17 +410,20 @@ function switch_to_base_form() {
     secondAttributeDiv && secondAttributeDiv.remove();
 }
 
-function switch_to_default_form(){
+function switch_to_default_form() {
     switch_to_base_form();
     let operatorDiv = document.getElementById("operator-div");
-    operatorDiv.parentNode.insertBefore(clonedOperatorValueDiv,operatorDiv.nextSibling)
-    operatorDiv.parentNode.insertBefore(clonedSecondAttributeDiv,operatorDiv.nextSibling.nextSibling)
+    operatorDiv.parentNode.insertBefore(clonedOperatorValueDiv, operatorDiv.nextSibling)
+    operatorDiv.parentNode.insertBefore(clonedSecondAttributeDiv, operatorDiv.nextSibling.nextSibling)
+    let operatorValue = clonedOperatorValueDiv.querySelector("#operator-value");
+    add_operator_value_events(operatorValue)
 }
 
 
 function check_if_second_attribute_alert_should_be_shown() {
     let valueIsRequired = document.getElementById("value-is-required");
     let secondAttribute = document.getElementById("second-attribute");
+    let operatorValue = document.getElementById("operator-value");
     if (operatorValue.value == "Attribute value") {
         if (secondAttribute && secondAttribute.value) {
             secondAttribute.classList.remove("alert");
@@ -487,7 +505,7 @@ function load_upper_modal(latestElementRightClick) {
         allData[latestElementRightClick.allDataIndex],
         latestElementRightClick.id
     );
-    
+
     data = chosen.nodes[latestElementRightClick.node];
     let attribute = document.getElementById("attribute");
     let operator = document.getElementById("operator");
@@ -857,7 +875,23 @@ function hide_context_menu(e, contextMenu) {
 
 /* END Context menu */
 
+
+
+
 /* START Logic of data structure */
+
+function traslate_operator_en_to_fa(operator) {
+    switch (operator) {
+        case "AND":
+            return "و"
+        case "OR":
+            return "یا"
+        case "NOT":
+            return "نفی"
+        default:
+            return "و"
+    }
+}
 let result = [];
 function create_logical_operator_data_structure_sentence(data) {
     if (!data || Object.keys(data).length === 0) {
@@ -874,15 +908,15 @@ function create_logical_operator_data_structure_sentence(data) {
             data.nodes.forEach(function (singleNode, index, array) {
                 result.push(singleNode.sentence);
                 if (index !== array.length - 1) {
-                    result.push(data.operator);
+                    result.push(traslate_operator_en_to_fa(data.operator));
                 }
             });
-            result.push(data.operator);
+            result.push(traslate_operator_en_to_fa(data.operator));
         }
         data.childs.forEach(function (singleChild, index, array) {
             create_logical_operator_data_structure_sentence(singleChild);
             if (index !== array.length - 1) {
-                result.push(data.operator);
+                result.push(traslate_operator_en_to_fa(data.operator));
             }
         });
         result.push(")");
@@ -896,7 +930,7 @@ function create_logical_operator_data_structure_sentence(data) {
         data.nodes.forEach(function (singleNode, index, array) {
             result.push(singleNode.sentence);
             if (index !== array.length - 1) {
-                result.push(data.operator);
+                result.push(traslate_operator_en_to_fa(data.operator));
             }
         });
         if (data.nodes.length >= 2) {
@@ -1159,9 +1193,9 @@ function create_elements_of_one_node_of_logical_operator_data_structure(
                 `<select id="not-` +
                 data.id +
                 `" class="rounded px-2 py-1 text-xs border border-solid border-300-gray">
-    <option value="AND">AND</option>
-    <option value="OR">OR</option>
-    <option value="NOT" selected>NOT</option>
+    <option value="AND">و</option>
+    <option value="OR">یا</option>
+    <option value="NOT" selected>نفی</option>
 </select>`;
             newElemIfSentenceComplete.appendChild(newElemSelect);
             parendNode.appendChild(newElemIfSentenceComplete);
@@ -1177,9 +1211,9 @@ function create_elements_of_one_node_of_logical_operator_data_structure(
             `<select id="operator-` +
             data.id +
             `" class="rounded px-2 py-1 text-xs border border-solid border-300-gray">
-    <option value="AND">AND</option>
-    <option value="OR">OR</option>
-    <option value="NOT">NOT</option>
+    <option value="AND">و</option>
+    <option value="OR">یا</option>
+    <option value="NOT">نفی</option>
 </select>`;
         newElemIfSentenceComplete.appendChild(newElemSelect);
         parendNode.appendChild(newElemIfSentenceComplete);
@@ -1341,7 +1375,7 @@ addIfThenButton.addEventListener("click", function () {
 function add_new_if_then() {
     let ifThens = document.querySelectorAll(".if-then");
     let newIfThen = ifThens[0].cloneNode(true);
-    newIfThen.children[0].children[0].innerHTML = "Else if";
+    newIfThen.children[0].children[0].innerHTML = "و اگر";
     newIfThen.querySelector(".close-if-then").style.display = "block";
     ifThens[ifThens.length - 1].parentNode.insertBefore(
         newIfThen,

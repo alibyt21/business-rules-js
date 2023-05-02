@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="fa" dir="ltr">
+<html lang="fa" dir="rtl">
 
 <head>
     <meta charset="UTF-8">
@@ -22,12 +22,12 @@
         }
 
         .nonIf-sentences .sentence {
-            padding-left: 1rem;
+            padding-right: 1rem;
         }
 
         #then-sentences .sentence,
         #else-sentences .sentence {
-            padding-left: 1rem;
+            padding-right: 1rem;
         }
 
         .sentence:hover {
@@ -84,7 +84,7 @@
                 <!-- modal header -->
                 <div class="flex justify-between items-center p-7">
                     <div class="underline">
-                        Add Business Rule
+                        اضافه کردن قائده تجاری جدید
                     </div>
                     <div class="close-lower text-black cursor-pointer w-4 h-4">
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5}
@@ -99,22 +99,21 @@
                 <!-- modal body -->
                 <div class="w-full p-7">
                     <div>
-                        <label class="w-full " id="generic_name">Name</label>
+                        <label class="w-full " id="generic_name">نام</label>
                         <div class="w-full">
                             <input id="input-name" type="text"
                                 class="w-full border border-solid border-[#cccccc] p-1 rounded alert" maxlength="50">
-                            <label class="text-red-600 text-sm invisible" id="name-is-required">A name is
-                                required.</label>
+                            <label class="text-red-600 text-sm invisible" id="name-is-required">وارد کردن نام اجباری است.</label>
                         </div>
                     </div>
 
 
                     <div class="w-full my-4">
-                        <label class="w-full" id="adminModelDescription">Description</label>
+                        <label class="w-full" id="adminModelDescription">توضیحات</label>
                         <div class="w-full">
                             <input id="InputDescription" type="text"
                                 class="w-full border border-solid border-[#cccccc] p-1 rounded" maxlength="200">
-                            <label class="hidden" id="descriptionIsRequired">A Description is required.</label>
+                            <label class="hidden" id="descriptionIsRequired">وارد کردن توضیحات اجباری است</label>
                         </div>
                     </div>
 
@@ -123,7 +122,7 @@
                             <div class="w-full select-none">
                                 <label>
                                     <input id="send-notification" type="checkbox">
-                                    <span>Send Notifications</span>
+                                    <span>اطلاعیه ارسال شود</span>
                                 </label>
                             </div>
                         </div>
@@ -143,7 +142,7 @@
                             <div class="w-full">
                                 <label class="">
                                     <input type="checkbox" class="">
-                                    <span>Excluded</span>
+                                    <span>محروم</span>
                                 </label>
                             </div>
                         </div>
@@ -152,7 +151,7 @@
                     <div class="if-then relative border broder-solid border-gray-300 px-5 rounded-xl z-[99] bg-white my-3">
                         <!-- start if container -->
                         <div class="if-container block-container w-full my-4" data-index="0">
-                            <div class="w-full">If</div>
+                            <div class="w-full">اگر</div>
                             <div class="if-summary"></div>
 
                             <div class="w-full pr-8 pt-2">
@@ -160,14 +159,14 @@
                             </div>
 
                             <!-- start if sentences -->
-                            <div class="pl-8 max-h-[350px] overflow-auto">
+                            <div class="pr-8 max-h-[350px] overflow-auto">
                                 <div class="data-container" id="if-sentences-container"></div>
                             </div>
                             <!-- end if sentences -->
 
-                            <div class="w-full pl-8 py-2 text-sm text-[#428bca] hover:underline">
+                            <div class="w-full pr-8 py-2 text-sm text-[#428bca] hover:underline">
                                 <button class="open-upper cursor-pointer">
-                                    Add
+                                    اضافه
                                 </button>
                             </div>
                         </div>
@@ -175,28 +174,28 @@
 
                         <!-- start then container -->
                         <div class="then-container block-container my-4" data-index="1">
-                            <div class="w-full">Then</div>
+                            <div class="w-full">آنگاه</div>
 
                             <div class="w-full pr-8 pt-2">
                                 <div class="w-full ml-8 border border-solid border-[#cccccc]"></div>
                             </div>
 
                             <!-- start then sentences -->
-                            <div class="pl-8 max-h-[200px] overflow-auto">
+                            <div class="pr-8 max-h-[200px] overflow-auto">
                                 <div class="data-container" id="then-sentences-container"></div>
                             </div>
                             <!-- end then sentences -->
 
-                            <div class="w-full ml-8 py-2 text-sm text-[#428bca] hover:underline">
+                            <div class="w-full mr-8 py-2 text-sm text-[#428bca] hover:underline">
                                 <button class="open-upper cursor-pointer">
-                                    Add
+                                    اضافه
                                 </button>
                             </div>
                         </div>
                         <!-- end then container -->
 
                         <!-- start close if then block -->
-                        <div class="close-if-then absolute top-4 right-4 cursor-pointer select-none" style="display: none;">
+                        <div class="close-if-then absolute top-4 left-4 cursor-pointer select-none" style="display: none;">
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
                                 stroke="currentColor" class="w-5 h-5">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
@@ -216,21 +215,21 @@
                     <div class="border broder-solid border-gray-300 my-3 px-5 rounded-xl ">
                         <!-- start else container -->
                         <div class="else-container block-container my-4" data-index="2">
-                            <div class="w-full">Else</div>
+                            <div class="w-full">وگرنه</div>
 
                             <div class="w-full pr-8 pt-2">
                                 <div class="w-full ml-8 border border-solid border-[#cccccc]"></div>
                             </div>
 
                             <!-- start else sentences -->
-                            <div class="pl-8 max-h-[200px] overflow-auto">
+                            <div class="pr-8 max-h-[200px] overflow-auto">
                                 <div class="data-container" id="else-sentences-container"></div>
                             </div>
                             <!-- end else sentences -->
 
-                            <div class="w-full py-2 ml-8 text-sm text-[#428bca] hover:underline">
+                            <div class="w-full py-2 mr-8 text-sm text-[#428bca] hover:underline">
                                 <button class="open-upper cursor-pointer">
-                                    Add
+                                    اضافه
                                 </button>
                             </div>
                         </div>
@@ -239,11 +238,11 @@
                 </div>
                 <div class="border border-gray-200 border-solid"></div>
                 <div class="w-full flex justify-end p-7 py-6">
-                    <button id="lower-modal-save-button"
-                        class="close-lower w-[140px] bg-[#1eb8eb] disabled:bg-[#a0b8c8] disabled:text-black hover:bg-[#0a6eeb] hover:text-white rounded py-2 mr-4"
-                        disabled>save</button>
                     <button id="lower-modal-cancel-button"
-                        class="close-lower w-[140px] bg-[#1eb8eb] hover:bg-[#0a6eeb] hover:text-white rounded py-2">cancel</button>
+                        class="close-lower w-[140px] bg-[#1eb8eb] hover:bg-[#0a6eeb] hover:text-white rounded py-2 ml-4">لغو</button>
+                    <button id="lower-modal-save-button"
+                        class="close-lower w-[140px] bg-[#1eb8eb] disabled:bg-[#a0b8c8] disabled:text-black hover:bg-[#0a6eeb] hover:text-white rounded py-2"
+                        disabled>ذخیره</button>
                 </div>
                 <!-- end modal body -->
             </div>
@@ -260,7 +259,7 @@
                 <!-- modal header -->
                 <div class="flex justify-between items-center p-7">
                     <div class="underline">
-                        Create Condition
+                        ایجاد شرط جدید
                     </div>
                     <div class="close-upper text-black cursor-pointer w-4 h-4">
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5}
@@ -276,7 +275,7 @@
                 <div class="w-full p-7">
                     <!-- start inputs -->
                     <div class="w-full" id="attribute-div">
-                        <label class="w-full">Attribute</label>
+                        <label class="w-full">ویژگی</label>
                         <div class="w-full">
                             <select id="attribute" class="w-full p-2 bg-white border border-[#cccccc] rounded">
                                 <optgroup label="Attribute">
@@ -288,7 +287,7 @@
                     </div>
 
                     <div class="w-full my-4" id="operator-div">
-                        <label class="w-full " id="operator-label">Operator</label>
+                        <label class="w-full " id="operator-label">عملگر</label>
                         <div class="w-full">
                             <select id="operator" class="w-full p-2 bg-white border border-[#cccccc] rounded">
                                 <optgroup label="Value comparison">
@@ -320,7 +319,7 @@
                     </div>
 
                     <div class="w-full my-4" id="operator-value-div">
-                        <label class="w-full" id="operator-value-label">Is equal to</label>
+                        <label class="w-full" id="operator-value-label">برابر است با</label>
                         <div class="w-full">
                             <select id="operator-value" class="w-full p-2 bg-white border border-[#cccccc] rounded">
                                 <option value="Attribute value">Attribute value</option>
@@ -331,7 +330,7 @@
                     </div>
 
                     <div class="w-full my-4" id="second-attribute-div">
-                        <label class="w-full">Attribute</label>
+                        <label class="w-full">ویژگی</label>
                         <div class="w-full">
                             <select id="second-attribute" class="w-full p-2 bg-white border border-[#cccccc] rounded">
                                 <optgroup label="Attributes">
@@ -339,8 +338,7 @@
                                     <option value="Code">Code</option>
                                 </optgroup>
                             </select>
-                            <label class="text-red-600 text-sm invisible" id="value-is-required">A value is
-                                required.</label>
+                            <label class="text-red-600 text-sm invisible" id="value-is-required">وارد کردن یک مقدار اجباری است.</label>
                         </div>
                     </div>
 
@@ -397,17 +395,17 @@
                             </table>
                         </div>
                         <div class="flex flex-row space-x-2 my-2">
-                            <button class="text-blue-600 cursor-pointer add-new-row select-none">Add</button>
-                            <button class="text-blue-600 cursor-pointer delete-new-row select-none">Delete</button>
+                            <button class="text-blue-600 cursor-pointer add-new-row select-none">اضافه</button>
+                            <button class="text-blue-600 cursor-pointer delete-new-row select-none">حذف</button>
                         </div>
                     </div>
                 </div>
                 <div class="border border-gray-200 border-solid"></div>
                 <div class="w-full flex justify-end p-7 py-6">
-                    <button id="save-upper" data-mode data-number
-                        class="w-[140px] bg-[#1eb8eb] disabled:bg-[#a0b8c8] disabled:text-black hover:bg-[#0a6eeb] hover:text-white rounded py-2 mr-4">save</button>
                     <button
-                        class="close-upper w-[140px] bg-[#1eb8eb] hover:bg-[#0a6eeb] hover:text-white rounded py-2">cancel</button>
+                        class="close-upper w-[140px] bg-[#1eb8eb] hover:bg-[#0a6eeb] hover:text-white rounded py-2 ml-4">لغو</button>
+                    <button id="save-upper" data-mode data-number
+                        class="w-[140px] bg-[#1eb8eb] disabled:bg-[#a0b8c8] disabled:text-black hover:bg-[#0a6eeb] hover:text-white rounded py-2">ذخیره</button>
                 </div>
                 <!-- end modal body -->
             </div>
@@ -423,19 +421,19 @@
             style="display:none">
             <ul>
                 <li id="add" data-mode class="hover:bg-gray-200 px-7 py-1">
-                    Add
+                    اضافه
                 </li>
                 <li id="edit" data-mode class="hover:bg-gray-200 px-7 py-1">
-                    Edit
+                    ویرایش
                 </li>
                 <li id="delete" data-mode class="hover:bg-gray-200 px-7 py-1">
-                    Delete
+                    حذف
                 </li>
                 <li id="group" class="hover:bg-gray-200 px-7 py-1 not-allowed">
-                    Group
+                    گروه کردن
                 </li>
                 <li id="ungroup" class="hover:bg-gray-200 px-7 py-1 not-allowed">
-                    Ungroup
+                    لغو گروه کردن
                 </li>
             </ul>
         </div>
