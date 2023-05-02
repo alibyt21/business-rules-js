@@ -9,6 +9,9 @@ if (localStorage.getItem("data")) {
     allData = lowerModalData.allData;
 }
 
+let upperMode;
+
+
 /* START helper functions */
 let latestId = -1;
 if (localStorage.getItem("latestId")) {
@@ -450,19 +453,7 @@ function save_upper_modal(allDataIndex = 0, latestElementRightClick = false) {
     let selects = upperModal.querySelectorAll("select");
     let secondAttribute = upperModal.querySelector("#second-attribute");
     conditionSentence = selects[0].value + " " + selects[1].value;
-    switch (selects[2].value) {
-        case "Attribute value":
-            conditionSentence = conditionSentence + " " + secondAttribute.value;
-            break;
-        case "Attribute":
-            conditionSentence = conditionSentence + " " + selects[3].value;
-            break;
-        case "Blank":
-            conditionSentence = conditionSentence + " " + "Blank";
-            break;
-        default:
-            conditionSentence = conditionSentence + " " + selects[3].value;
-    }
+    conditionSentence = save_default_mode(selects,secondAttribute);
 
     let newNode = {
         left: selects[0].value,
@@ -488,6 +479,27 @@ function save_upper_modal(allDataIndex = 0, latestElementRightClick = false) {
         allDataIndex,
         latestElementRightClick.id
     );
+}
+
+function save_default_mode(selects,secondAttribute){
+    switch (selects[2].value) {
+        case "Attribute value":
+            conditionSentence = conditionSentence + " " + secondAttribute.value;
+            break;
+        case "Attribute":
+            conditionSentence = conditionSentence + " " + selects[3].value;
+            break;
+        case "Blank":
+            conditionSentence = conditionSentence + " " + "Blank";
+            break;
+        default:
+            conditionSentence = conditionSentence + " " + selects[3].value;
+    }
+    return conditionSentence;
+}
+
+function save_base_mode(){
+
 }
 
 function create_new_sentence_and_append(parentNode, index) {
